@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仪表盘 - 灾备管理平台</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        .quick-actions { display: flex; gap: 12px; margin-bottom: 20px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .section-header h3 { font-size: 16px; font-weight: 600; }
+        .tag-pill { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; background: #f3f4f6; color: #374151; }
+    </style>
+</head>
+<body>
+    <header class="top-nav">
+        <div class="logo">灾备管理平台</div>
+        <nav class="top-menu">
+            <a href="index.html" class="active">首页</a>
+            <a href="system.html">系统管理</a>
+            <a href="monitor.html">监控中心</a>
+            <a href="unstructured/client.html">非结构化备份</a>
+        </nav>
+        <div class="user-info">
+            <span>管理员</span>
+            <a href="login.html" class="logout">退出</a>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <nav>
+                <div class="menu-group">
+                    <div class="menu-title active">概览</div>
+                    <ul class="menu-list">
+                        <li><a href="index.html" class="active">仪表盘</a></li>
+                    </ul>
+                </div>
+                <div class="menu-group">
+                    <div class="menu-title">数据保护</div>
+                    <ul class="menu-list">
+                        <li><a href="unstructured/client.html">非结构化备份</a></li>
+                        <li><a href="#">结构化备份</a></li>
+                        <li><a href="#">虚拟化备份</a></li>
+                        <li><a href="#">物理机备份</a></li>
+                    </ul>
+                </div>
+                <div class="menu-group">
+                    <div class="menu-title">运维管理</div>
+                    <ul class="menu-list">
+                        <li><a href="monitor.html">监控中心</a></li>
+                        <li><a href="system.html">系统管理</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <nav class="breadcrumb">
+                <span class="current">仪表盘</span>
+            </nav>
+            <h1 class="page-title">仪表盘</h1>
+
+            <div class="quick-actions">
+                <button class="btn btn-primary" onclick="location.href='unstructured/client.html'">+ 注册客户端</button>
+                <button class="btn" onclick="location.href='unstructured/storage.html'">存储管理</button>
+                <button class="btn" onclick="location.href='monitor.html'">查看告警</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">在线客户端</div>
+                    <div class="stat-value">128</div>
+                    <div class="stat-change">↑ 4 较昨日</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">存储池总数</div>
+                    <div class="stat-value">6</div>
+                    <div class="stat-change">正常运行</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">今日备份数据量</div>
+                    <div class="stat-value">2.4 TB</div>
+                    <div class="stat-change">↑ 12%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">待处理告警</div>
+                    <div class="stat-value" style="color: var(--danger)">3</div>
+                    <div class="stat-change down">需立即关注</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-header">
+                    <h3>备份趋势（近7天）</h3>
+                    <select class="btn" style="padding: 4px 8px;">
+                        <option>近7天</option>
+                        <option>近30天</option>
+                    </select>
+                </div>
+                <div class="chart-placeholder">
+                    [ 图表占位区 ] 接入 ECharts：展示每日备份数据量与任务数趋势
+                </div>
+            </div>
+
+            <div class="card recent-jobs">
+                <div class="section-header">
+                    <h3>最近任务动态</h3>
+                    <a href="#" style="font-size: 13px; color: var(--primary);">查看全部</a>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>任务名称</th>
+                            <th>客户端</th>
+                            <th>类型</th>
+                            <th>开始时间</th>
+                            <th>耗时</th>
+                            <th>结果</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Finance-Daily-Backup</strong></td>
+                            <td>Client-Win-01</td>
+                            <td><span class="tag-pill">非结构化</span></td>
+                            <td>2024-01-15 02:00</td>
+                            <td>45 分钟</td>
+                            <td><span class="status-badge success">成功</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>DB-Archive-Weekly</strong></td>
+                            <td>Client-Linux-05</td>
+                            <td><span class="tag-pill">结构化</span></td>
+                            <td>2024-01-15 01:30</td>
+                            <td>12 分钟</td>
+                            <td><span class="status-badge success">成功</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>VM-Snapshot-01</strong></td>
+                            <td>ESXi-Cluster-A</td>
+                            <td><span class="tag-pill">虚拟化</span></td>
+                            <td>2024-01-15 00:00</td>
+                            <td>8 分钟</td>
+                            <td><span class="status-badge warning">警告</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="common.js"></script>
+</body>
+</html>

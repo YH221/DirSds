@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统管理 - 灾备管理平台</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        .sub-nav { display: flex; gap: 8px; border-bottom: 1px solid var(--gray-200); margin-bottom: 20px; }
+        .sub-nav a { padding: 8px 16px; color: var(--gray-600); text-decoration: none; font-size: 14px; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+        .sub-nav a.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 500; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn .2s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        .perm-matrix { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        .perm-matrix th, .perm-matrix td { padding: 10px; border: 1px solid var(--gray-200); text-align: center; font-size: 13px; }
+        .perm-matrix th { background: var(--gray-50); }
+        .perm-matrix td:first-child { text-align: left; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <header class="top-nav">
+        <div class="logo">灾备管理平台</div>
+        <nav class="top-menu">
+            <a href="index.html">首页</a>
+            <a href="system.html" class="active">系统管理</a>
+            <a href="monitor.html">监控中心</a>
+            <a href="unstructured/client.html">非结构化备份</a>
+        </nav>
+        <div class="user-info">
+            <span>管理员</span>
+            <a href="login.html" class="logout">退出</a>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <nav>
+                <div class="menu-group">
+                    <div class="menu-title">概览</div>
+                    <ul class="menu-list">
+                        <li><a href="index.html">仪表盘</a></li>
+                    </ul>
+                </div>
+                <div class="menu-group">
+                    <div class="menu-title">数据保护</div>
+                    <ul class="menu-list">
+                        <li><a href="unstructured/client.html">非结构化备份</a></li>
+                        <li><a href="#">结构化备份</a></li>
+                        <li><a href="#">虚拟化备份</a></li>
+                        <li><a href="#">物理机备份</a></li>
+                    </ul>
+                </div>
+                <div class="menu-group">
+                    <div class="menu-title active">运维管理</div>
+                    <ul class="menu-list">
+                        <li><a href="monitor.html">监控中心</a></li>
+                        <li><a href="system.html" class="active">系统管理</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <nav class="breadcrumb">
+                <a href="index.html">首页</a>
+                <span class="sep">/</span>
+                <span class="current">系统管理</span>
+            </nav>
+            <h1 class="page-title">系统管理</h1>
+
+            <div class="sub-nav">
+                <a href="#" class="active" data-tab="tab-config">平台配置</a>
+                <a href="#" data-tab="tab-users">用户管理</a>
+                <a href="#" data-tab="tab-roles">角色权限</a>
+                <a href="#" data-tab="tab-logs">操作日志</a>
+            </div>
+
+            <div id="tab-config" class="tab-content active">
+                <div class="card" style="max-width: 800px;">
+                    <form class="form-grid">
+                        <div class="form-group">
+                            <label>平台名称</label>
+                            <input type="text" value="灾备管理平台">
+                        </div>
+                        <div class="form-group">
+                            <label>会话超时（分钟）</label>
+                            <input type="number" value="30">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>登录页标语</label>
+                            <input type="text" value="统一数据保护与管理门户">
+                        </div>
+                        <div class="form-group">
+                            <label>日志保留天数</label>
+                            <input type="number" value="90">
+                        </div>
+                        <div class="form-group">
+                            <label>邮件通知服务</label>
+                            <select><option>启用</option><option>禁用</option></select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>SMTP 服务器地址</label>
+                            <input type="text" placeholder="smtp.example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>发件人邮箱</label>
+                            <input type="email" placeholder="alert@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>发件人密码</label>
+                            <input type="password" placeholder="••••••••">
+                        </div>
+                    </form>
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button class="btn btn-primary">保存配置</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-users" class="tab-content">
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="openModal('modal-add-user')">新建用户</button>
+                    <div class="search-box">
+                        <input type="text" placeholder="搜索用户名...">
+                        <button class="btn">搜索</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>用户名</th>
+                                <th>显示名</th>
+                                <th>角色</th>
+                                <th>状态</th>
+                                <th>最后登录</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>admin</strong></td>
+                                <td>系统管理员</td>
+                                <td>超级管理员</td>
+                                <td><span class="status-badge success">启用</span></td>
+                                <td>2024-01-15 09:23</td>
+                                <td>
+                                    <button class="btn-text">编辑</button>
+                                    <button class="btn-text danger">禁用</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>operator01</strong></td>
+                                <td>运维专员</td>
+                                <td>运维人员</td>
+                                <td><span class="status-badge success">启用</span></td>
+                                <td>2024-01-14 18:05</td>
+                                <td>
+                                    <button class="btn-text">编辑</button>
+                                    <button class="btn-text danger">禁用</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-roles" class="tab-content">
+                <div class="toolbar">
+                    <button class="btn btn-primary">新建角色</button>
+                </div>
+                <div class="card">
+                    <table class="perm-matrix">
+                        <thead>
+                            <tr>
+                                <th>功能模块</th>
+                                <th>查看</th>
+                                <th>创建</th>
+                                <th>编辑</th>
+                                <th>删除</th>
+                                <th>执行</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>客户端管理</td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="checkbox" checked></td>
+                            </tr>
+                            <tr>
+                                <td>存储管理</td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="checkbox" checked></td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>系统配置</td>
+                                <td><input type="checkbox"></td>
+                                <td>-</td>
+                                <td><input type="checkbox"></td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-logs" class="tab-content">
+                <div class="toolbar">
+                    <div class="filter-bar">
+                        <select>
+                            <option>全部级别</option>
+                            <option>INFO</option>
+                            <option>WARNING</option>
+                            <option>ERROR</option>
+                        </select>
+                        <input type="date" class="btn" style="padding: 4px 8px;">
+                    </div>
+                    <button class="btn">导出日志</button>
+                </div>
+                <div class="card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>级别</th>
+                                <th>用户</th>
+                                <th>模块</th>
+                                <th>操作内容</th>
+                                <th>IP 地址</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-01-15 10:23:05</td>
+                                <td><span class="status-badge info">INFO</span></td>
+                                <td>admin</td>
+                                <td>客户端管理</td>
+                                <td>注册客户端 Client-Win-02</td>
+                                <td>192.168.1.10</td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-15 09:45:12</td>
+                                <td><span class="status-badge warning">WARN</span></td>
+                                <td>system</td>
+                                <td>存储管理</td>
+                                <td>存储池 Pool-NAS-01 使用率超过 70%</td>
+                                <td>127.0.0.1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-add-user" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>新建用户</h3>
+                <button class="close-btn" onclick="closeModal('modal-add-user')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="form-grid">
+                    <div class="form-group">
+                        <label>用户名 <span class="required">*</span></label>
+                        <input type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>显示名</label>
+                        <input type="text">
+                    </div>
+                    <div class="form-group">
+                        <label>初始密码 <span class="required">*</span></label>
+                        <input type="password">
+                    </div>
+                    <div class="form-group">
+                        <label>角色 <span class="required">*</span></label>
+                        <select>
+                            <option>运维人员</option>
+                            <option>审计员</option>
+                            <option>超级管理员</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-add-user')">取消</button>
+                <button class="btn btn-primary">创建</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="common.js"></script>
+    <script>
+        document.querySelectorAll('.sub-nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.sub-nav a').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                document.getElementById(link.dataset.tab).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

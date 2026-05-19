@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>接管管理 - 非结构化备份</title>
+    <link rel="stylesheet" href="../common.css">
+</head>
+<body>
+    <header class="top-nav">
+        <div class="logo">灾备管理平台</div>
+        <nav class="top-menu">
+            <a href="../index.html">首页</a>
+            <a href="../system.html">系统管理</a>
+            <a href="../monitor.html">监控中心</a>
+            <a href="./client.html" class="active">非结构化备份</a>
+        </nav>
+        <div class="user-info">
+            <span>管理员</span>
+            <a href="../login.html" class="logout">退出</a>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <nav>
+                <div class="menu-group">
+                    <div class="menu-title active">非结构化备份</div>
+                    <ul class="menu-list">
+                        <li><a href="./client.html">客户端管理</a></li>
+                        <li><a href="./takeover.html" class="active">接管管理</a></li>
+                        <li><a href="./export.html">数据导出</a></li>
+                        <li><a href="./storage.html">存储管理</a></li>
+                        <li><a href="./search.html">全文检索</a></li>
+                        <li><a href="./tags.html">标签策略</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="sep">/</span>
+                <span>非结构化备份</span>
+                <span class="sep">/</span>
+                <span class="current">接管管理</span>
+            </nav>
+            <h1 class="page-title">接管管理</h1>
+
+            <div class="toolbar">
+                <button class="btn btn-primary" onclick="openModal('modal-add-takeover')">创建接管点</button>
+                <div class="search-box">
+                    <input type="text" placeholder="搜索接管点名称...">
+                    <button class="btn">搜索</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>接管点名称</th>
+                            <th>源客户端</th>
+                            <th>目标路径</th>
+                            <th>创建时间</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>TK-Finance-20240115</strong></td>
+                            <td>Client-Win-01</td>
+                            <td>/mnt/takeover/finance</td>
+                            <td>2024-01-15 02:30</td>
+                            <td><span class="status-badge success">可用</span></td>
+                            <td>
+                                <button class="btn-text">挂载</button>
+                                <button class="btn-text" onclick="openModal('modal-drill')">演练</button>
+                                <button class="btn-text danger">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>TK-HR-Weekly</strong></td>
+                            <td>Client-Linux-05</td>
+                            <td>/mnt/takeover/hr</td>
+                            <td>2024-01-14 01:00</td>
+                            <td><span class="status-badge info">演练中</span></td>
+                            <td>
+                                <button class="btn-text">查看</button>
+                                <button class="btn-text">停止演练</button>
+                                <button class="btn-text danger">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-add-takeover" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>创建接管点</h3>
+                <button class="close-btn" onclick="closeModal('modal-add-takeover')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="form-grid">
+                    <div class="form-group">
+                        <label>接管点名称 <span class="required">*</span></label>
+                        <input type="text" placeholder="例如：TK-Project-01">
+                    </div>
+                    <div class="form-group">
+                        <label>选择客户端 <span class="required">*</span></label>
+                        <select>
+                            <option>Client-Win-01</option>
+                            <option>Client-Linux-05</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>目标存储池 <span class="required">*</span></label>
+                        <select>
+                            <option>Pool-Default</option>
+                            <option>Pool-NAS-01</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>备注说明</label>
+                        <textarea rows="3" placeholder="接管用途描述..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-add-takeover')">取消</button>
+                <button class="btn btn-primary">创建</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-drill" class="modal">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3>发起接管演练</h3>
+                <button class="close-btn" onclick="closeModal('modal-drill')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom:12px; color:var(--gray-600);">确认对 <strong>TK-Finance-20240115</strong> 发起演练？系统将基于该接管点创建隔离环境。</p>
+                <form class="form-grid">
+                    <div class="form-group full-width">
+                        <label>演练时长（小时）</label>
+                        <input type="number" value="2" min="1" max="72">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-drill')">取消</button>
+                <button class="btn btn-primary">确认发起</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common.js"></script>
+</body>
+</html>

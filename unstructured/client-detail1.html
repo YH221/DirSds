@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户端详情 - 非结构化备份</title>
+    <link rel="stylesheet" href="../common.css">
+    <style>
+        /* ===== 页面级基础 ===== */
+        .detail-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px; }
+        .client-title { display:flex; align-items:center; gap:10px; }
+        .client-name { font-size:20px; font-weight:600; color:var(--gray-900); }
+        .back-link { color:var(--primary); text-decoration:none; font-size:13px; }
+        
+        /* ===== Tab 导航（截图样式：下划线高亮） ===== */
+        .detail-tabs { display:flex; gap:0; border-bottom:1px solid var(--gray-200); margin-bottom:20px; }
+        .detail-tabs .tab-btn { padding:10px 20px; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-1px; cursor:pointer; color:var(--gray-600); font-size:14px; }
+        .detail-tabs .tab-btn:hover { color:var(--gray-900); }
+        .detail-tabs .tab-btn.active { color:var(--primary); border-bottom-color:var(--primary); font-weight:500; }
+        .tab-panel { display:none; }
+        .tab-panel.active { display:block; animation:fadeIn .2s; }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+        /* ===== 卡片与布局 ===== */
+        .panel-grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+        @media (max-width:900px){ .panel-grid-2 { grid-template-columns: 1fr; } }
+        .panel-card { background:#fff; border:1px solid var(--gray-200); border-radius:6px; padding:16px; }
+        .panel-title { font-size:15px; font-weight:500; color:var(--gray-900); margin-bottom:16px; }
+        .panel-toolbar { display:flex; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+
+        /* ===== 信息表格（运行状态/参数配置里的键值对） ===== */
+        .info-table { width:100%; border-collapse:collapse; font-size:13px; }
+        .info-table td { padding:10px 12px; border:1px solid var(--gray-200); color:var(--gray-700); }
+        .info-table td:first-child { width:140px; background:var(--gray-50); color:var(--gray-600); font-weight:500; }
+        .info-table .status-green { color: var(--success); font-weight:500; }
+
+        /* ===== 图标按钮（暂停、详情、配置、刷新） ===== */
+        .btn-icon { display:inline-flex; align-items:center; gap:5px; padding:6px 14px; border:1px solid var(--gray-300); background:#fff; border-radius:4px; cursor:pointer; font-size:13px; color:var(--gray-700); }
+        .btn-icon:hover { border-color:var(--gray-400); background:var(--gray-50); }
+        .btn-blue { background:var(--primary); color:#fff; border-color:var(--primary); }
+        .btn-blue:hover { background:var(--primary-dark); }
+        .btn-gray { background:#f3f4f6; border-color:#e5e7eb; }
+        
+        /* ===== 开关（启停状态） ===== */
+        .toggle-switch { position:relative; display:inline-block; width:36px; height:20px; vertical-align:middle; }
+        .toggle-switch input { opacity:0; width:0; height:0; }
+        .toggle-slider { position:absolute; cursor:pointer; inset:0; background:#d1d5db; border-radius:20px; transition:.3s; }
+        .toggle-slider:before { position:absolute; content:""; height:14px; width:14px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.3s; }
+        .toggle-switch input:checked + .toggle-slider { background:var(--primary); }
+        .toggle-switch input:checked + .toggle-slider:before { transform:translateX(16px); }
+        .toggle-label { font-size:13px; margin-left:6px; color:var(--gray-600); }
+
+        /* ===== 数据源配置工具栏 ===== */
+        .tool-group { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+        .tool-group .divider { color:var(--gray-300); margin:0 4px; }
+        .input-short { width:160px; }
+        .input-xs { width:80px; }
+
+        /* ===== 文件信息：原目录/搜索切换 ===== */
+        .radio-pill { display:inline-flex; align-items:center; gap:16px; margin-right:16px; }
+        .radio-pill label { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; color:var(--gray-700); font-weight:500; }
+        
+        /* ===== 日期范围 ===== */
+        .date-range { display:inline-flex; align-items:center; gap:6px; }
+        .date-range input { width:130px; padding:5px 8px; border:1px solid var(--gray-300); border-radius:4px; font-size:13px; }
+        .date-range .sep { color:var(--gray-400); }
+
+        /* ===== 表格紧凑模式 ===== */
+        .table-compact td, .table-compact th { padding:10px 8px; font-size:12px; white-space:nowrap; }
+        .text-green { color: var(--success); font-weight:500; }
+        .text-red { color: var(--danger); font-weight:500; }
+        .text-blue { color: var(--primary); cursor:pointer; }
+        .text-blue:hover { text-decoration:underline; }
+
+        /* ===== 大表单弹窗（新增数据源） ===== */
+        .modal-lg .modal-content { max-width: 720px; max-height: 90vh; }
+        .modal-body-scroll { max-height: calc(90vh - 120px); overflow-y: auto; padding:20px; }
+        .form-line { display:flex; align-items:center; margin-bottom:14px; gap:10px; }
+        .form-line .form-label { width:160px; text-align:right; font-size:13px; color:var(--gray-700); flex-shrink:0; }
+        .form-line .form-ctrl { flex:1; display:flex; align-items:center; gap:8px; }
+        .form-line .form-ctrl input[type="text"], .form-line .form-ctrl input[type="number"], .form-line .form-ctrl select, .form-line .form-ctrl textarea { flex:1; padding:7px 10px; border:1px solid var(--gray-300); border-radius:4px; font-size:13px; outline:none; }
+        .form-line .form-ctrl input:focus, .form-line .form-ctrl select:focus, .form-line .form-ctrl textarea:focus { border-color:var(--primary); }
+        .form-line .form-ctrl .input-with-btn { flex:1; display:flex; gap:6px; }
+        .form-line .form-ctrl .input-with-btn input { flex:1; }
+        .form-line .form-ctrl .input-with-btn button { white-space:nowrap; }
+        .form-line .form-ctrl textarea { min-height:60px; resize:vertical; }
+        .radio-group-inline { display:flex; gap:16px; align-items:center; }
+        .radio-group-inline label { display:flex; align-items:center; gap:5px; cursor:pointer; font-weight:normal; color:var(--gray-700); font-size:13px; }
+        .sub-box { background:#f8fafc; border:1px solid var(--gray-200); border-radius:6px; padding:16px; margin:10px 0 10px 170px; }
+        .required-dot { color:var(--danger); margin-right:2px; }
+        
+        /* 分页 */
+        .pagebar { display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-top:12px; font-size:12px; color:var(--gray-500); }
+        .pagebar button { padding:4px 10px; border:1px solid var(--gray-200); background:#fff; cursor:pointer; border-radius:4px; font-size:12px; }
+        .pagebar button:hover { background:var(--gray-50); }
+        .pagebar button.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+        .pagebar select { padding:4px 8px; border:1px solid var(--gray-200); border-radius:4px; font-size:12px; }
+    </style>
+</head>
+<body>
+    <header class="top-nav">
+        <div class="logo">灾备管理平台</div>
+        <nav class="top-menu">
+            <a href="../index.html">首页</a>
+            <a href="../system.html">系统管理</a>
+            <a href="../monitor.html">监控中心</a>
+            <a href="./client.html" class="active">非结构化备份</a>
+        </nav>
+        <div class="user-info">
+            <span>管理员</span>
+            <a href="../login.html" class="logout">退出</a>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <nav>
+                <div class="menu-group">
+                    <div class="menu-title active">非结构化备份</div>
+                    <ul class="menu-list">
+                        <li><a href="./client.html" class="active">客户端管理</a></li>
+                        <li><a href="./takeover.html">接管管理</a></li>
+                        <li><a href="./export.html">数据导出</a></li>
+                        <li><a href="./storage.html">存储管理</a></li>
+                        <li><a href="./search.html">全文检索</a></li>
+                        <li><a href="./tags.html">标签策略</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="sep">/</span>
+                <a href="./client.html">非结构化备份</a>
+                <span class="sep">/</span>
+                <a href="./client.html">客户端管理</a>
+                <span class="sep">/</span>
+                <span class="current" id="clientName">Client-Win-01</span>
+            </nav>
+
+            <div class="detail-header">
+                <div class="client-title">
+                    <span class="client-name" id="clientName2">Client-Win-01</span>
+                    <span class="status-badge success">在线</span>
+                </div>
+                <a href="./client.html" class="back-link">← 返回列表</a>
+            </div>
+
+            <div class="detail-tabs">
+                <button class="tab-btn active" data-tab="tab-config">配置信息</button>
+                <button class="tab-btn" data-tab="tab-datasource">数据源配置</button>
+                <button class="tab-btn" data-tab="tab-files">文件信息</button>
+                <button class="tab-btn" data-tab="tab-backup">备份记录</button>
+                <button class="tab-btn" data-tab="tab-restore">还原任务</button>
+                <button class="tab-btn" data-tab="tab-command">指令信息</button>
+                <button class="tab-btn" data-tab="tab-traffic">流量监控</button>
+                <button class="tab-btn" data-tab="tab-delete">删除记录</button>
+            </div>
+
+            <!-- ========== 1. 配置信息（截图1） ========== -->
+            <div id="tab-config" class="tab-panel active">
+                <div class="panel-grid-2">
+                    <div class="panel-card">
+                        <div class="panel-title">运行状态</div>
+                        <div class="panel-toolbar">
+                            <button class="btn-icon">⏸ 暂停</button>
+                            <button class="btn-icon">ⓘ 详情</button>
+                        </div>
+                        <table class="info-table">
+                            <tr><td>同步状态</td><td class="text-green">已同步</td></tr>
+                            <tr><td>监控服务</td><td class="text-green">运行</td></tr>
+                            <tr><td>传输服务</td><td class="text-green">运行</td></tr>
+                            <tr><td>最大速度</td><td>90.41MB</td></tr>
+                            <tr><td>实时速度</td><td>0Bytes</td></tr>
+                            <tr><td>累计检查文件数</td><td>53</td></tr>
+                        </table>
+                    </div>
+                    <div class="panel-card">
+                        <div class="panel-title">参数配置</div>
+                        <div class="panel-toolbar">
+                            <button class="btn-icon" onclick="openModal('modal-param-config')">⚙ 配置</button>
+                        </div>
+                        <table class="info-table">
+                            <tr><td>连接时间</td><td>2026-05-18 16:45:58</td></tr>
+                            <tr><td>更新时间</td><td>2026-05-18 16:12:37</td></tr>
+                            <tr><td>同步到客户端时间</td><td>2026-05-19 10:17:10</td></tr>
+                            <tr><td>IP地址</td><td>192.168.1.176</td></tr>
+                            <tr><td>操作系统</td><td>Linux</td></tr>
+                            <tr><td>速度限制</td><td>无限制</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 2. 数据源配置（截图2） ========== -->
+            <div id="tab-datasource" class="tab-panel">
+                <div class="card">
+                    <div class="tool-group">
+                        <button class="btn btn-primary" onclick="openModal('modal-add-datasource')">+ 增加配置</button>
+                        <button class="btn-icon">⟳ 立即扫描</button>
+                        <span class="divider">|</span>
+                        <label style="font-size:13px; color:var(--gray-600);">路径:</label>
+                        <input type="text" class="input-short" placeholder="请输入路径">
+                        <button class="btn-blue" style="padding:5px 14px; border-radius:4px; font-size:13px;">搜索</button>
+                        <button class="btn-icon">重置</button>
+                    </div>
+                    <table class="data-table table-compact">
+                        <thead>
+                            <tr>
+                                <th width="30"><input type="checkbox"></th>
+                                <th>路径</th>
+                                <th>同步检测间隔</th>
+                                <th>保留版本数</th>
+                                <th>保留天数</th>
+                                <th>时间窗口</th>
+                                <th>备份间隔</th>
+                                <th>黑名单</th>
+                                <th>源端目录数据删除</th>
+                                <th>白名单</th>
+                                <th>同步状态</th>
+                                <th>启停状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>/ces1</td>
+                                <td>24</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>23,24</td>
+                                <td>10</td>
+                                <td>*.swp,*.swx,*$REC...</td>
+                                <td>是</td>
+                                <td>无</td>
+                                <td class="text-green">已激活</td>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <span class="text-blue" onclick="openModal('modal-edit-datasource')">编辑</span>
+                                    <span class="text-red" style="margin-left:8px; cursor:pointer;">删除</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>/数据</td>
+                                <td>24</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td>18,19</td>
+                                <td>10</td>
+                                <td>*.swp,*.swx,*$REC...</td>
+                                <td>否</td>
+                                <td>无</td>
+                                <td class="text-green">已激活</td>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <span class="text-blue" onclick="openModal('modal-edit-datasource')">编辑</span>
+                                    <span class="text-red" style="margin-left:8px; cursor:pointer;">删除</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagebar">
+                        <span>共2条</span>
+                        <button>&lt;</button>
+                        <button class="active">1</button>
+                        <button>&gt;</button>
+                        <select><option>10 条/页</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 3. 文件信息（截图5） ========== -->
+            <div id="tab-files" class="tab-panel">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                        <div class="radio-pill">
+                            <label><input type="radio" name="fileMode" checked> 原目录</label>
+                            <label><input type="radio" name="fileMode"> 搜索</label>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn-blue" style="padding:6px 16px; border-radius:4px;">按检索还原</button>
+                            <button class="btn-blue" style="padding:6px 16px; border-radius:4px;">导出</button>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px; font-size:13px;">
+                        <label style="color:var(--gray-600); font-weight:500;">文件类型:</label>
+                        <select style="padding:5px 8px; border:1px solid var(--gray-300); border-radius:4px; font-size:13px; width:100px;"><option>文件</option><option>目录</option></select>
+                        
+                        <label style="color:var(--gray-600); font-weight:500;">文件名称:</label>
+                        <div class="input-with-btn" style="display:flex; gap:4px;">
+                            <input type="text" placeholder="请输入文件名称" style="width:140px; padding:5px 8px; border:1px solid var(--gray-300); border-radius:4px;">
+                            <select style="padding:5px; border:1px solid var(--gray-300); border-radius:4px; font-size:12px;"><option>精确</option><option>模糊</option></select>
+                        </div>
+                        
+                        <label style="color:var(--gray-600); font-weight:500;">路径:</label>
+                        <div class="input-with-btn" style="display:flex; gap:4px;">
+                            <input type="text" placeholder="请输入路径" style="width:140px; padding:5px 8px; border:1px solid var(--gray-300); border-radius:4px;">
+                            <select style="padding:5px; border:1px solid var(--gray-300); border-radius:4px; font-size:12px;"><option>精确</option><option>模糊</option></select>
+                        </div>
+
+                        <label style="color:var(--gray-600); font-weight:500;">导出状态:</label>
+                        <select style="padding:5px 8px; border:1px solid var(--gray-300); border-radius:4px; font-size:13px; width:110px;"><option>请选择</option><option>未导出</option><option>已导出</option></select>
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px; font-size:13px;">
+                        <label style="color:var(--gray-600); font-weight:500;">备份时间:</label>
+                        <div class="date-range">
+                            <input type="text" placeholder="开始日期">
+                            <span class="sep">~</span>
+                            <input type="text" placeholder="结束日期">
+                        </div>
+                        <label style="color:var(--gray-600); font-weight:500;">修改时间:</label>
+                        <div class="date-range">
+                            <input type="text" placeholder="开始日期">
+                            <span class="sep">~</span>
+                            <input type="text" placeholder="结束日期">
+                        </div>
+                        <button class="btn-blue" style="padding:5px 16px; border-radius:4px; font-size:13px; margin-left:auto;">查 询</button>
+                        <button class="btn-icon" style="margin-left:4px;">重置</button>
+                    </div>
+
+                    <table class="data-table table-compact">
+                        <thead>
+                            <tr>
+                                <th width="30"><input type="checkbox"></th>
+                                <th>文件名</th>
+                                <th>全路径</th>
+                                <th>文件数</th>
+                                <th>文件大小</th>
+                                <th>备份时间</th>
+                                <th>写入时间</th>
+                                <th>修改时间</th>
+                                <th>导出状态</th>
+                                <th>还原</th>
+                                <th>详情</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>版本.txt</td>
+                                <td>/ces1/版本.txt</td>
+                                <td></td>
+                                <td>89.95 KB</td>
+                                <td>2026-05-13 17:37:44</td>
+                                <td>2026-05-13 17:40:45</td>
+                                <td>2026-05-13 17:36:46</td>
+                                <td class="text-red">未导出</td>
+                                <td class="text-blue">还原</td>
+                                <td class="text-blue">详情</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>file_h57tok5u.txt</td>
+                                <td>/ces1/file_h57tok5u.txt</td>
+                                <td></td>
+                                <td>69.69 KB</td>
+                                <td>2026-05-13 13:46:58</td>
+                                <td>2026-05-13 13:46:58</td>
+                                <td>2026-05-13 13:35:32</td>
+                                <td class="text-red">未导出</td>
+                                <td class="text-blue">还原</td>
+                                <td class="text-blue">详情</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>file_f48v4rk1.jpg</td>
+                                <td>/ces1/file_f48v4rk1.jpg</td>
+                                <td></td>
+                                <td>288.20 KB</td>
+                                <td>2026-05-13 13:46:58</td>
+                                <td>2026-05-13 13:46:58</td>
+                                <td>2026-05-13 13:35:32</td>
+                                <td class="text-red">未导出</td>
+                                <td class="text-blue">还原</td>
+                                <td class="text-blue">详情</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagebar">
+                        <span>共 138 条</span>
+                        <button>&lt;</button>
+                        <button class="active">1</button>
+                        <button>2</button>
+                        <button>3</button>
+                        <button>4</button>
+                        <button>5</button>
+                        <span>...</span>
+                        <button>14</button>
+                        <button>&gt;</button>
+                        <select><option>10 条/页</option></select>
+                        <span>跳至</span>
+                        <input type="text" style="width:40px; padding:3px; border:1px solid var(--gray-200); border-radius:4px; text-align:center;">
+                        <span>页</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 4. 备份记录（截图6） ========== -->
+            <div id="tab-backup" class="tab-panel">
+                <div class="card">
+                    <div class="tool-group">
+                        <button class="btn-icon btn-blue">⚙ 配置</button>
+                        <button class="btn-icon">⟳ 刷新</button>
+                        <button class="btn-icon">🔍 搜索条件</button>
+                        <button class="btn-icon" style="margin-left:auto; border:none; font-size:18px;">☰</button>
+                    </div>
+                    <table class="data-table table-compact">
+                        <thead>
+                            <tr>
+                                <th>路径</th>
+                                <th>处理状态</th>
+                                <th>重复</th>
+                                <th>储存完成</th>
+                                <th>事件类型</th>
+                                <th>文件大小</th>
+                                <th>备份时间 ▼</th>
+                                <th>写入时间 ▼</th>
+                                <th>修改时间 ▼</th>
+                                <th>文件类型</th>
+                                <th>指纹</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>/数据/file_4kj2e564.txt</td>
+                                <td class="text-green">已处理</td>
+                                <td>否</td>
+                                <td class="text-green">是</td>
+                                <td>扫描</td>
+                                <td>43.46 KB</td>
+                                <td>2026-05-18 18:00:14</td>
+                                <td>2026-05-18 18:00:14</td>
+                                <td>2026-05-18 16:55:50</td>
+                                <td>文件</td>
+                                <td>77092e18b225</td>
+                            </tr>
+                            <tr>
+                                <td>/ces1/1gb_fast.mp4</td>
+                                <td class="text-green">已处理</td>
+                                <td>否</td>
+                                <td class="text-green">是</td>
+                                <td>扫描</td>
+                                <td>1.09 GB</td>
+                                <td>2026-05-18 16:49:08</td>
+                                <td>2026-05-18 16:50:20</td>
+                                <td>2026-05-13 16:28:34</td>
+                                <td>文件</td>
+                                <td>f5bcfa95b149a</td>
+                            </tr>
+                            <tr>
+                                <td>/ces1/file_q62z66t9.mp4</td>
+                                <td class="text-green">已处理</td>
+                                <td class="text-red">是</td>
+                                <td class="text-green">是</td>
+                                <td>扫描</td>
+                                <td>509.12 MB</td>
+                                <td>2026-05-18 16:47:42</td>
+                                <td></td>
+                                <td>2026-05-13 13:35:47</td>
+                                <td>文件</td>
+                                <td>7bc240c38465</td>
+                            </tr>
+                            <tr>
+                                <td>/ces1/100m.mp4</td>
+                                <td class="text-green">已处理</td>
+                                <td class="text-red">是</td>
+                                <td class="text-green">是</td>
+                                <td>扫描</td>
+                                <td>10.09 MB</td>
+                                <td>2026-05-18 16:46:11</td>
+                                <td></td>
+                                <td>2026-05-13 16:32:25</td>
+                                <td>文件</td>
+                                <td>bc0a904b02c7f</td>
+                            </tr>
+                            <tr>
+                                <td>/数据/2.mp4</td>
+                                <td class="text-green">已处理</td>
+                                <td>否</td>
+                                <td class="text-green">是</td>
+                                <td>扫描</td>
+                                <td>509.12 MB</td>
+                                <td>2026-05-18 16:46:09</td>
+                                <td>2026-05-18 16:46:11</td>
+                                <td>2026-05-13 11:16:52</td>
+                                <td>文件</td>
+                                <td>7bc240c38465</td>
+                            </tr>
+                            <tr>
+                                <td>/数据/100m.mp4</td>
+                                <td class="text-green">已处理</td>
+                                <td class="text-red">是</td>
+                                <td class="text-green">是</td>
+                                <td>扫描</td>
+                                <td>10.09 MB</td>
+                                <td>2026-05-18 16:46:02</td>
+                                <td></td>
+                                <td>2026-05-13 16:59:18</td>
+                                <td>文件</td>
+                                <td>bc0a904b02c7f</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagebar">
+                        <span>共 6 条</span>
+                        <button>&lt;</button>
+                        <button class="active">1</button>
+                        <button>&gt;</button>
+                        <select><option>10 条/页</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 5. 还原任务 ========== -->
+            <div id="tab-restore" class="tab-panel">
+                <div class="card">
+                    <div class="tool-group">
+                        <button class="btn-icon">⟳ 刷新</button>
+                    </div>
+                    <table class="data-table table-compact">
+                        <thead>
+                            <tr>
+                                <th>任务名称</th>
+                                <th>还原路径</th>
+                                <th>状态</th>
+                                <th>开始时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Restore-20240115-01</td>
+                                <td>原路径</td>
+                                <td><span class="status-badge success">完成</span></td>
+                                <td>2024-01-15 08:00</td>
+                                <td><span class="text-red" style="cursor:pointer;">停止还原</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ========== 6. 指令信息 ========== -->
+            <div id="tab-command" class="tab-panel">
+                <div class="card">
+                    <div class="tool-group">
+                        <button class="btn-icon">⟳ 更新</button>
+                        <button class="btn-icon btn-danger" style="color:var(--danger); border-color:#fecaca;">清空</button>
+                    </div>
+                    <table class="data-table table-compact">
+                        <thead>
+                            <tr><th>时间</th><th>指令类型</th><th>状态</th><th>详情</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-01-15 09:23:05</td>
+                                <td>暂停服务</td>
+                                <td><span class="status-badge success">已执行</span></td>
+                                <td>客户端归档服务已暂停</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ========== 7. 流量监控 ========== -->
+            <div id="tab-traffic" class="tab-panel">
+                <div class="panel-card">
+                    <div class="panel-title">非结构化总体备份速度</div>
+                    <div class="chart-placeholder" style="height:260px; margin-bottom:16px;">
+                        [ 图表占位区 ] 实时展示客户端传输速率趋势
+                    </div>
+                    <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="stat-card">
+                            <div class="stat-label">当前上传速度</div>
+                            <div class="stat-value">120 MB/s</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">今日传输总量</div>
+                            <div class="stat-value">450 GB</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">平均速度</div>
+                            <div class="stat-value">85 MB/s</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 8. 删除记录 ========== -->
+            <div id="tab-delete" class="tab-panel">
+                <div class="card">
+                    <div class="tool-group">
+                        <button class="btn-icon">⟳ 刷新</button>
+                        <button class="btn-icon">🔍 搜索条件</button>
+                    </div>
+                    <table class="data-table table-compact">
+                        <thead>
+                            <tr>
+                                <th>文件名称</th>
+                                <th>文件路径</th>
+                                <th>文件大小</th>
+                                <th>修改时间</th>
+                                <th>删除时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>temp_backup.zip</td>
+                                <td>D:/Finance/Temp/</td>
+                                <td>150 MB</td>
+                                <td>2024-01-10 14:00</td>
+                                <td>2024-01-15 02:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========== 弹窗：参数配置（配置信息Tab的点配置按钮） ========== -->
+    <div id="modal-param-config" class="modal">
+        <div class="modal-content" style="max-width:480px;">
+            <div class="modal-header">
+                <h3>参数配置</h3>
+                <button class="close-btn" onclick="closeModal('modal-param-config')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="form-grid">
+                    <div class="form-group">
+                        <label>描述</label>
+                        <input type="text" placeholder="对客户端的描述">
+                    </div>
+                    <div class="form-group">
+                        <label>压缩</label>
+                        <select><option>是</option><option>否</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>速度限制（MB/s）</label>
+                        <input type="number" value="0" placeholder="0表示不限速">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-param-config')">取消</button>
+                <button class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 弹窗：新增数据源（截图3-4 长表单） ========== -->
+    <div id="modal-add-datasource" class="modal modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>新增数据源</h3>
+                <button class="close-btn" onclick="closeModal('modal-add-datasource')">&times;</button>
+            </div>
+            <div class="modal-body-scroll">
+                <div class="form-line">
+                    <div class="form-label"><span class="required-dot">*</span>目录：</div>
+                    <div class="form-ctrl">
+                        <div class="input-with-btn">
+                            <input type="text" placeholder="请选择文件路径">
+                            <button class="btn-icon">选择文件路径</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-line">
+                    <div class="form-label">忽略空文件：</div>
+                    <div class="form-ctrl">
+                        <div class="radio-group-inline">
+                            <label><input type="radio" name="ignoreEmpty"> 是</label>
+                            <label><input type="radio" name="ignoreEmpty" checked> 否</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-line">
+                    <div class="form-label">存储策略：</div>
+                    <div class="form-ctrl">
+                        <select><option>默认使用客户端配置</option><option>Pool-Default</option><option>Pool-NAS-01</option></select>
+                    </div>
+                </div>
+                <div class="form-line">
+                    <div class="form-label">标签策略：</div>
+                    <div class="form-ctrl">
+                        <select><option>默认使用客户端配置</option><option>核心财务数据</option><option>研发代码仓库</option></select>
+                    </div>
+                </div>
+                <div class="form-line">
+                    <div class="form-label">压缩类型：</div>
+                    <div class="form-ctrl">
+                        <select><option>请选择压缩类型</option><option>ZIP</option><option>GZIP</option><option>不压缩</option></select>
+                    </div>
+                </div>
+                <div class="form-line">
+                    <div class="form-label">是否选择归档策略：</div>
+                    <div class="form-ctrl">
+                        <div class="radio-group-inline">
+                            <label><input type="radio" name="archivePolicy"> 是</label>
+                            <label><input type="radio" name="archivePolicy" checked> 否</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-line">
+                    <div class="form-label">开启全扫描：</div>
+                    <div class="form-ctrl">
+                        <div class="radio-group-inline">
+                            <label><input type="radio" name="fullScan"> 首次全扫描</label>
+                            <label><input type="radio" name="fullScan" checked> 周期全扫描</label>
+                            <label><input type="radio" name="fullScan"> 关闭全扫描</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- 周期全扫描的子配置 -->
+                <div class="sub-box">
+                    <div class="form-line" style="margin-bottom:10px;">
+                        <div class="form-label" style="width:140px;">全扫描间隔时间(小时)：</div>
+                        <div class="form-ctrl"><input type="number" value="24" style="width:100px;"></div>
+                    </div>
+                    <div class="form-line" style="margin-bottom:0;">
+                        <div class="form-label" style="width:140px;">时间窗口(小时)：</div>
+                        <div class="form-ctrl" style="gap:10px;">
+                            <input type="number" value="0" style="width:80px;">
+                            <input type="number" value="24" style="width:80px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-line">
+                    <div class="form-label">备份间隔(分)：</div>
+                    <div class="form-ctrl">
+                        <input type="number" placeholder="请输入备份间隔时间">
+                    </div>
+                </div>
+                <div class="form-line">
+                    <div class="form-label">源端目录数据到期删除：</div>
+                    <div class="form-ctrl">
+                        <div class="radio-group-inline">
+                            <label><input type="radio" name="delExpire"> 是</label>
+                            <label><input type="radio" name="delExpire" checked> 否</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-line">
+                    <div class="form-label">保留类型：</div>
+                    <div class="form-ctrl">
+                        <select><option>请选择保留类型</option><option>按天数</option><option>按版本数</option></select>
+                    </div>
+                </div>
+                <div class="form-line">
+                    <div class="form-label">备份数据保留天数：</div>
+                    <div class="form-ctrl">
+                        <input type="number" placeholder="请输入备份数据保留天数">
+                    </div>
+                </div>
+                <div class="form-line">
+                    <div class="form-label">版本数：</div>
+                    <div class="form-ctrl">
+                        <input type="number" placeholder="请输入版本数">
+                    </div>
+                </div>
+                <div class="form-line" style="align-items:flex-start;">
+                    <div class="form-label">白名单：</div>
+                    <div class="form-ctrl" style="flex-direction:column; align-items:flex-start; gap:6px;">
+                        <textarea placeholder="每行一个规则，支持通配符"></textarea>
+                        <button class="btn-icon" style="font-size:12px;">+ 新增白名单</button>
+                    </div>
+                </div>
+                <div class="form-line" style="align-items:flex-start;">
+                    <div class="form-label">黑名单：</div>
+                    <div class="form-ctrl" style="flex-direction:column; align-items:flex-start; gap:6px;">
+                        <textarea>*.swp,*.swx,*$RECYCLE.BIN*,*System Volume Information*,.DS_Store,*.~lock*,*~$*</textarea>
+                        <button class="btn-icon" style="font-size:12px;">+ 新增黑名单</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-add-datasource')">取 消</button>
+                <button class="btn btn-primary">保 存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑数据源（简化版） -->
+    <div id="modal-edit-datasource" class="modal modal-lg">
+        <div class="modal-content">
+            <div class="modal-header"><h3>编辑数据源</h3><button class="close-btn" onclick="closeModal('modal-edit-datasource')">&times;</button></div>
+            <div class="modal-body-scroll">
+                <div class="form-line"><div class="form-label">目录：</div><div class="form-ctrl"><input type="text" value="/ces1"></div></div>
+                <div class="form-line"><div class="form-label">备份间隔(分)：</div><div class="form-ctrl"><input type="number" value="10"></div></div>
+                <div class="form-line"><div class="form-label">版本数：</div><div class="form-ctrl"><input type="number" value="2"></div></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-edit-datasource')">取 消</button>
+                <button class="btn btn-primary">保 存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common.js"></script>
+    <script>
+        // Tab 切换
+        document.querySelectorAll('.detail-tabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.detail-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+        // 解析URL客户端名称
+        const params = new URLSearchParams(location.search);
+        const cid = params.get('id') || 'Client-Win-01';
+        document.getElementById('clientName').textContent = cid;
+        document.getElementById('clientName2').textContent = cid;
+    </script>
+</body>
+</html>

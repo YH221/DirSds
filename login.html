@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 灾备管理平台</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        .login-box { background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); width: 100%; max-width: 420px; }
+        .login-header { text-align: center; margin-bottom: 32px; }
+        .login-header .logo-text { font-size: 24px; font-weight: 700; color: #2563eb; margin-bottom: 8px; display: inline-block; }
+        .login-header p { color: #6b7280; font-size: 14px; }
+        .login-form .form-row { margin-bottom: 20px; }
+        .login-form label { display: block; margin-bottom: 6px; font-size: 13px; color: #374151; font-weight: 500; }
+        .login-form input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; outline: none; font-size: 14px; }
+        .login-form input:focus { border-color: #2563eb; }
+        .login-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 13px; }
+        .login-options label { display: flex; align-items: center; gap: 6px; cursor: pointer; color: #4b5563; font-weight: normal; }
+        .login-options a { color: #2563eb; text-decoration: none; }
+        .login-options a:hover { text-decoration: underline; }
+        .login-btn { width: 100%; padding: 10px; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
+        .login-btn:hover { background: #1d4ed8; }
+        .login-error { color: #ef4444; font-size: 13px; margin-top: 12px; text-align: center; display: none; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="logo-text">灾备管理平台</div>
+                <p>统一数据保护与管理门户</p>
+            </div>
+            <form class="login-form" onsubmit="return handleLogin(event)">
+                <div class="form-row">
+                    <label>用户名</label>
+                    <input type="text" id="username" placeholder="请输入用户名" required>
+                </div>
+                <div class="form-row">
+                    <label>密码</label>
+                    <input type="password" id="password" placeholder="请输入密码" required>
+                </div>
+                <div class="login-options">
+                    <label><input type="checkbox" id="remember"> 记住我</label>
+                    <a href="#">忘记密码？</a>
+                </div>
+                <button type="submit" class="login-btn">登 录</button>
+                <div class="login-error" id="loginError">用户名或密码错误（演示账号：admin / admin）</div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            if (u === 'admin' && p === 'admin') {
+                location.href = 'index.html';
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

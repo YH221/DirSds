@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>存储管理 - 非结构化备份</title>
+    <link rel="stylesheet" href="../common.css">
+    <style>
+        .section-tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+        .section-tabs .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            cursor: pointer;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        .section-tabs .tab-btn:hover { color: #111827; }
+        .section-tabs .tab-btn.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .progress-with-text { display: flex; align-items: center; gap: 10px; }
+        .progress-track { width: 120px; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #3b82f6; border-radius: 4px; }
+        .progress-fill.warning { background: #f59e0b; }
+        .progress-fill.danger { background: #ef4444; }
+    </style>
+</head>
+<body>
+    <header class="top-nav">
+        <div class="logo">灾备管理平台</div>
+        <nav class="top-menu">
+            <a href="../index.html">首页</a>
+            <a href="../system.html">系统管理</a>
+            <a href="../monitor.html">监控中心</a>
+            <a href="./client.html" class="active">非结构化备份</a>
+        </nav>
+        <div class="user-info">
+            <span>管理员</span>
+            <a href="../login.html" class="logout">退出</a>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <nav>
+                <div class="menu-group">
+                    <div class="menu-title active">非结构化备份</div>
+                    <ul class="menu-list">
+                        <li><a href="./client.html">客户端管理</a></li>
+                        <li><a href="./takeover.html">接管管理</a></li>
+                        <li><a href="./export.html">数据导出</a></li>
+                        <li><a href="./storage.html" class="active">存储管理</a></li>
+                        <li><a href="./search.html">全文检索</a></li>
+                        <li><a href="./tags.html">标签策略</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="sep">/</span>
+                <span>非结构化备份</span>
+                <span class="sep">/</span>
+                <span class="current">存储管理</span>
+            </nav>
+            <h1 class="page-title">存储管理</h1>
+
+            <div class="section-tabs">
+                <button class="tab-btn active" data-target="panel-policy">存储策略</button>
+                <button class="tab-btn" data-target="panel-replicate">复制迁移</button>
+                <button class="tab-btn" data-target="panel-offline">离线介质</button>
+            </div>
+
+            <div id="panel-policy" class="tab-panel active">
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="openModal('modal-add-pool')">添加存储池</button>
+                    <div class="search-box">
+                        <input type="text" id="searchPool" placeholder="搜索存储池名称...">
+                        <button class="btn" onclick="filterTable('searchPool', 'poolTable')">搜索</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <table class="data-table" id="poolTable">
+                        <thead>
+                            <tr>
+                                <th width="40"><input type="checkbox" class="check-all"></th>
+                                <th>存储池名称</th>
+                                <th>存储类型</th>
+                                <th>路径 / Bucket</th>
+                                <th>总容量</th>
+                                <th>已用</th>
+                                <th>使用率</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" class="check-item"></td>
+                                <td><strong>Pool-Default</strong></td>
+                                <td>本地磁盘</td>
+                                <td>/data/backup/pool1</td>
+                                <td>20 TB</td>
+                                <td>8.5 TB</td>
+                                <td>
+                                    <div class="progress-with-text">
+                                        <div class="progress-track"><div class="progress-fill" style="width:42.5%"></div></div>
+                                        <span>42.5%</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge success">在线</span></td>
+                                <td>
+                                    <button class="btn-text">编辑</button>
+                                    <button class="btn-text">扩容</button>
+                                    <button class="btn-text danger">删除</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="check-item"></td>
+                                <td><strong>Pool-NAS-01</strong></td>
+                                <td>NFS 共享</td>
+                                <td>192.168.1.100:/vol/backup</td>
+                                <td>50 TB</td>
+                                <td>35 TB</td>
+                                <td>
+                                    <div class="progress-with-text">
+                                        <div class="progress-track"><div class="progress-fill warning" style="width:70%"></div></div>
+                                        <span>70%</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge success">在线</span></td>
+                                <td>
+                                    <button class="btn-text">编辑</button>
+                                    <button class="btn-text">扩容</button>
+                                    <button class="btn-text danger">删除</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="check-item"></td>
+                                <td><strong>Pool-S3-Archive</strong></td>
+                                <td>对象存储 (S3)</td>
+                                <td>s3://archive-bucket</td>
+                                <td>不限</td>
+                                <td>120 TB</td>
+                                <td>-</td>
+                                <td><span class="status-badge success">在线</span></td>
+                                <td>
+                                    <button class="btn-text">编辑</button>
+                                    <button class="btn-text danger">删除</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="panel-replicate" class="tab-panel">
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="openModal('modal-add-replication')">新建迁移任务</button>
+                    <div class="filter-bar">
+                        <select id="filterStatus">
+                            <option value="">全部状态</option>
+                            <option value="running">进行中</option>
+                            <option value="success">已完成</option>
+                            <option value="failed">失败</option>
+                            <option value="paused">已暂停</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>任务名称</th>
+                                <th>源存储池</th>
+                                <th>目标存储池</th>
+                                <th>迁移方式</th>
+                                <th>数据量级</th>
+                                <th>进度</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>daily-backup-sync</strong></td>
+                                <td>Pool-Default</td>
+                                <td>Pool-NAS-01</td>
+                                <td>增量复制</td>
+                                <td>1.2 TB</td>
+                                <td>
+                                    <div class="progress-with-text">
+                                        <div class="progress-track"><div class="progress-fill" style="width:65%"></div></div>
+                                        <span>65%</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge warning">进行中</span></td>
+                                <td>
+                                    <button class="btn-text">查看</button>
+                                    <button class="btn-text">暂停</button>
+                                    <button class="btn-text danger">停止</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>archive-monthly</strong></td>
+                                <td>Pool-NAS-01</td>
+                                <td>Pool-S3-Archive</td>
+                                <td>全量复制</td>
+                                <td>8.5 TB</td>
+                                <td>
+                                    <div class="progress-with-text">
+                                        <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+                                        <span>100%</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge success">已完成</span></td>
+                                <td>
+                                    <button class="btn-text">查看</button>
+                                    <button class="btn-text">重新执行</button>
+                                    <button class="btn-text danger">删除</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="panel-offline" class="tab-panel">
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="openModal('modal-add-media')">注册介质</button>
+                    <button class="btn" onclick="openModal('modal-import-offline')">导入离线数据</button>
+                </div>
+
+                <div class="card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th width="40"><input type="checkbox"></th>
+                                <th>介质编号</th>
+                                <th>介质名称</th>
+                                <th>类型</th>
+                                <th>所属库 / 位置</th>
+                                <th>容量</th>
+                                <th>已写容量</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>MED-2024001</td>
+                                <td><strong>LTO-9-Tape-01</strong></td>
+                                <td>LTO 磁带</td>
+                                <td>物理带库-A (Slot-05)</td>
+                                <td>18 TB</td>
+                                <td>12 TB</td>
+                                <td><span class="status-badge success">在库</span></td>
+                                <td>
+                                    <button class="btn-text">详情</button>
+                                    <button class="btn-text">出库</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>MED-2024002</td>
+                                <td><strong>USB-Disk-Archive</strong></td>
+                                <td>移动硬盘</td>
+                                <td>-</td>
+                                <td>5 TB</td>
+                                <td>-</td>
+                                <td><span class="status-badge info">离线</span></td>
+                                <td>
+                                    <button class="btn-text">详情</button>
+                                    <button class="btn-text">入库</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>MED-2024003</td>
+                                <td><strong>BD-XL-Monthly</strong></td>
+                                <td>蓝光光盘</td>
+                                <td>光盘库-B</td>
+                                <td>100 GB</td>
+                                <td>98 GB</td>
+                                <td><span class="status-badge success">在库</span></td>
+                                <td>
+                                    <button class="btn-text">详情</button>
+                                    <button class="btn-text">出库</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-add-pool" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>添加存储池</h3>
+                <button class="close-btn" onclick="closeModal('modal-add-pool')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="form-grid">
+                    <div class="form-group">
+                        <label>存储池名称 <span class="required">*</span></label>
+                        <input type="text" placeholder="例如：Pool-NAS-02">
+                    </div>
+                    <div class="form-group">
+                        <label>存储类型 <span class="required">*</span></label>
+                        <select>
+                            <option value="local">本地磁盘</option>
+                            <option value="nfs">NFS 共享</option>
+                            <option value="cifs">CIFS 共享</option>
+                            <option value="s3">对象存储 (S3)</option>
+                            <option value="tape">磁带库</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>路径 / 地址 <span class="required">*</span></label>
+                        <input type="text" placeholder="/data/... 或 IP:/path 或 s3://bucket">
+                    </div>
+                    <div class="form-group">
+                        <label>认证信息</label>
+                        <input type="text" placeholder="如适用，填写 AccessKey / 用户名">
+                    </div>
+                    <div class="form-group">
+                        <label>容量限制</label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="number" placeholder="0" style="flex:1;">
+                            <select style="width:80px;">
+                                <option>TB</option>
+                                <option>GB</option>
+                                <option>PB</option>
+                            </select>
+                        </div>
+                        <small class="form-tip">0 表示不限制</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-add-pool')">取消</button>
+                <button class="btn btn-primary">确认添加</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-add-replication" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>新建复制迁移任务</h3>
+                <button class="close-btn" onclick="closeModal('modal-add-replication')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="form-grid">
+                    <div class="form-group">
+                        <label>任务名称 <span class="required">*</span></label>
+                        <input type="text" placeholder="例如：Pool-A 到 Pool-B 每日同步">
+                    </div>
+                    <div class="form-group">
+                        <label>源存储池 <span class="required">*</span></label>
+                        <select>
+                            <option>Pool-Default</option>
+                            <option>Pool-NAS-01</option>
+                            <option>Pool-S3-Archive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>目标存储池 <span class="required">*</span></label>
+                        <select>
+                            <option>Pool-NAS-01</option>
+                            <option>Pool-Default</option>
+                            <option>Pool-S3-Archive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>迁移方式 <span class="required">*</span></label>
+                        <select>
+                            <option value="incremental">增量复制（推荐）</option>
+                            <option value="full">全量复制</option>
+                            <option value="differential">差异复制</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>执行策略</label>
+                        <div class="radio-group" style="display:flex; gap:16px; margin-top:6px;">
+                            <label style="font-weight:normal; cursor:pointer;">
+                                <input type="radio" name="schedule" checked> 立即执行
+                            </label>
+                            <label style="font-weight:normal; cursor:pointer;">
+                                <input type="radio" name="schedule"> 定时执行
+                            </label>
+                            <label style="font-weight:normal; cursor:pointer;">
+                                <input type="radio" name="schedule"> 仅创建（手动触发）
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-add-replication')">取消</button>
+                <button class="btn btn-primary">创建任务</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-add-media" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>注册离线介质</h3>
+                <button class="close-btn" onclick="closeModal('modal-add-media')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="form-grid">
+                    <div class="form-group">
+                        <label>介质编号</label>
+                        <input type="text" placeholder="留空则系统自动生成">
+                    </div>
+                    <div class="form-group">
+                        <label>介质名称 <span class="required">*</span></label>
+                        <input type="text" placeholder="例如：LTO-9-Tape-02">
+                    </div>
+                    <div class="form-group">
+                        <label>介质类型 <span class="required">*</span></label>
+                        <select>
+                            <option>LTO 磁带</option>
+                            <option>移动硬盘</option>
+                            <option>蓝光光盘</option>
+                            <option>其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>标称容量 <span class="required">*</span></label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="number" style="flex:1;">
+                            <select style="width:80px;">
+                                <option>GB</option>
+                                <option>TB</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>所属库 / 位置</label>
+                        <input type="text" placeholder="例如：物理带库-A">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-add-media')">取消</button>
+                <button class="btn btn-primary">注册</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-import-offline" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>导入离线数据</h3>
+                <button class="close-btn" onclick="closeModal('modal-import-offline')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="text-secondary">请选择已入库的离线介质，系统将读取其索引并导入元数据。</p>
+                <form class="form-grid">
+                    <div class="form-group">
+                        <label>选择介质</label>
+                        <select>
+                            <option>MED-2024001 - LTO-9-Tape-01</option>
+                            <option>MED-2024003 - BD-XL-Monthly</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-import-offline')">取消</button>
+                <button class="btn btn-primary">开始导入</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common.js"></script>
+    <script>
+        document.querySelectorAll('.section-tabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.section-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const targetId = btn.dataset.target;
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
