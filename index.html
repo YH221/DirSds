@@ -3,153 +3,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>仪表盘 - 灾备管理平台</title>
+    <title>智能数据安全保护平台</title>
     <link rel="stylesheet" href="common.css">
     <style>
-        .quick-actions { display: flex; gap: 12px; margin-bottom: 20px; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .section-header h3 { font-size: 16px; font-weight: 600; }
-        .tag-pill { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; background: #f3f4f6; color: #374151; }
+        /* 顶部导航 - 首页专用深色风格 */
+        .top-nav { background: #1f2937; }
+        .platform-title { display:flex; align-items:center; gap:10px; color:#fff; font-size:15px; font-weight:600; }
+        .platform-title .logo-mark { font-size:22px; font-weight:800; line-height:1; color:#fff; }
+        .platform-title .logo-mark span { color: #10b981; }
+        .platform-title small { display:block; font-size:10px; color:#9ca3af; font-weight:normal; letter-spacing:0.3px; margin-top:-2px; }
+        .top-menu a { color: #d1d5db; padding:6px 14px; }
+        .top-menu a:hover { color:#fff; }
+        .top-menu a.active { background: #10b981; color:#fff; border-radius:4px; }
+
+        /* 主内容区 - 首页无侧边栏，全宽 */
+        .dashboard-wrap { padding: 16px 24px; width:100%; box-sizing:border-box; }
+
+        /* 面包屑栏 */
+        .page-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+        .page-title { display:flex; align-items:center; gap:6px; color:var(--gray-700); font-size:14px; font-weight:500; }
+
+        /* 第一行：统计卡片 + 任务 */
+        .top-row { display:grid; grid-template-columns: repeat(4, 1fr) 260px; gap:16px; margin-bottom:16px; }
+        @media (max-width: 1200px){ .top-row { grid-template-columns: repeat(2, 1fr); } .task-panel { grid-column: span 2; } }
+
+        .stat-card-color { position:relative; padding:18px 20px; border-radius:6px; color:#fff; overflow:hidden; min-height:110px; display:flex; flex-direction:column; justify-content:center; }
+        .stat-card-color::after { content:''; position:absolute; right:12px; bottom:6px; width:70px; height:70px; background-repeat:no-repeat; background-position:center; background-size:contain; opacity:0.12; }
+        .stat-card-color.bg-blue::after { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42'/%3E%3C/svg%3E"); }
+        .stat-card-color.bg-green::after { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z'/%3E%3C/svg%3E"); }
+        .stat-card-color.bg-orange::after { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3C/svg%3E"); }
+        .stat-card-color.bg-purple::after { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Crect x='2' y='2' width='20' height='8' rx='2' ry='2'/%3E%3Crect x='2' y='14' width='20' height='8' rx='2' ry='2'/%3E%3Cline x1='6' y1='6' x2='6' y2='6'/%3E%3Cline x1='6' y1='18' x2='6' y2='18'/%3E%3C/svg%3E"); }
+
+        .stat-card-color .title { font-size:14px; opacity:0.95; margin-bottom:10px; position:relative; z-index:1; }
+        .stat-card-color .value { font-size:36px; font-weight:800; line-height:1; position:relative; z-index:1; }
+        .stat-card-color .unit { font-size:13px; opacity:0.9; margin-top:6px; position:relative; z-index:1; }
+        .bg-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .bg-green { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .bg-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .bg-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+
+        .task-panel { background:#fff; border:1px solid var(--gray-200); border-radius:6px; padding:14px 16px; display:flex; flex-direction:column; }
+        .task-panel h4 { font-size:14px; color:var(--gray-800); margin-bottom:10px; font-weight:600; }
+        .task-items { display:flex; justify-content:space-around; align-items:center; flex:1; }
+        .task-item { text-align:center; }
+        .task-icon { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; margin:0 auto 6px; }
+        .task-icon.ok { background:#d1fae5; color:#059669; }
+        .task-icon.warn { background:#fef3c7; color:#d97706; }
+        .task-icon.err { background:#fee2e2; color:#dc2626; }
+        .task-label { font-size:12px; color:var(--gray-500); }
+        .task-num { font-size:16px; font-weight:700; color:var(--gray-800); }
+
+        /* 中部三栏 */
+        .mid-row { display:grid; grid-template-columns: 1fr 1.3fr 1fr; gap:16px; margin-bottom:16px; }
+        @media (max-width: 1100px){ .mid-row { grid-template-columns:1fr; } }
+        .panel { background:#fff; border:1px solid var(--gray-200); border-radius:6px; padding:16px; }
+
+        .panel-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+        .panel-header h4 { font-size:14px; color:var(--gray-800); font-weight:600; margin:0; }
+        .tab-pills { display:flex; gap:4px; }
+        .tab-pills button { border:1px solid var(--gray-200); background:var(--gray-50); padding:3px 10px; font-size:12px; border-radius:4px; cursor:pointer; color:var(--gray-600); }
+        .tab-pills button.active { background:#6b7280; color:#fff; border-color:#6b7280; }
+
+        /* 图表简单模拟 */
+        .chart-ring { display:flex; justify-content:center; align-items:center; height:170px; position:relative; }
+        .ring-inner-text { position:absolute; text-align:center; }
+        .ring-inner-text .big { font-size:12px; color:var(--gray-500); }
+        .ring-inner-text .num { font-size:14px; color:var(--gray-700); font-weight:600; }
+
+        .pie-wrap { display:flex; align-items:center; gap:12px; }
+        .pie-info { font-size:11px; color:var(--gray-500); line-height:1.9; flex:1; }
+        .pie-table { width:100%; font-size:12px; border-collapse:collapse; margin-top:8px; }
+        .pie-table td { padding:6px 8px; border-bottom:1px solid var(--gray-100); color:var(--gray-700); }
+        .pie-table td:last-child { text-align:right; font-weight:500; }
+
+        .policy-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
+        .policy-card { text-align:center; padding:10px 4px; border:1px solid var(--gray-100); border-radius:6px; }
+        .policy-card .p-icon { width:38px; height:38px; margin:0 auto 6px; background:#e0f2fe; color:#0284c7; display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:16px; }
+        .policy-card .p-name { font-size:11px; color:var(--gray-500); margin-bottom:4px; }
+        .policy-card .p-val { font-size:16px; font-weight:700; color:var(--gray-800); }
+        .policy-card .p-val.green { color:#10b981; }
+
+        .client-row { display:flex; justify-content:space-around; margin-top:12px; padding-top:12px; border-top:1px solid var(--gray-100); }
+        .client-item { text-align:center; }
+        .client-icon { width:32px; height:32px; margin:0 auto 4px; background:#d1fae5; color:#059669; display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:14px; }
+        .client-icon.off { background:#f3f4f6; color:#9ca3af; }
+        .client-label { font-size:11px; color:var(--gray-500); }
+        .client-num { font-size:14px; font-weight:600; color:var(--gray-800); }
+
+        /* 底部系统统计 */
+        .sys-row .panel { padding:14px 16px; }
+        .sys-grid { display:grid; grid-template-columns: 140px 140px 140px 140px 1fr; gap:16px; align-items:start; }
+        @media (max-width: 1200px){ .sys-grid { grid-template-columns:1fr 1fr; } }
+
+        .ring-box { text-align:center; }
+        .ring-box .ring-label { font-size:12px; color:var(--gray-600); margin-top:6px; display:flex; align-items:center; justify-content:center; gap:4px; }
+        .ring-value { font-size:18px; font-weight:700; fill:#374151; }
+
+        .io-block h5 { font-size:13px; color:var(--gray-700); margin-bottom:10px; font-weight:500; }
+        .io-line { font-size:12px; color:var(--gray-500); line-height:2.2; }
+        .io-line span { color:#3b82f6; font-weight:500; }
+
+        .chart-area { position:relative; height:160px; }
+        .chart-area .unit { font-size:11px; color:var(--gray-400); margin-bottom:4px; }
+        .chart-svg { width:100%; height:130px; }
     </style>
 </head>
 <body>
     <header class="top-nav">
-        <div class="logo">灾备管理平台</div>
-        <nav class="top-menu">
-            <a href="index.html" class="active">首页</a>
-            <a href="system.html">系统管理</a>
-            <a href="monitor.html">监控中心</a>
-            <a href="unstructured/client.html">非结构化备份</a>
-        </nav>
+        <div style="display:flex; align-items:center; gap:14px;">
+            <div class="platform-title">
+                <div class="logo-mark">D<span>ir</span></div>
+                <div>
+                    智能数据安全保护平台
+                    <small>Smart data security protection platform</small>
+                </div>
+            </div>
+            <nav class="top-menu" style="margin-left:10px;">
+                <a href="#" class="active">概览</a>
+                <a href="#">监控中心</a>
+                <a href="unstructured/client.html">非结构化备份</a>
+                <a href="#">虚拟化备份</a>
+                <a href="#">裸机备份</a>
+                <a href="#">数据库备份</a>
+                <a href="#">复制迁移</a>
+                <a href="#">医疗检索</a>
+                <a href="#">CDP保护</a>
+                <a href="#">更多菜单 ▼</a>
+            </nav>
+        </div>
         <div class="user-info">
-            <span>管理员</span>
-            <a href="login.html" class="logout">退出</a>
+            <span style="color:#9ca3af; margin-right:8px;">🖥️</span>
+            <span>系统管理员 ▼</span>
         </div>
     </header>
 
-    <div class="main-container">
-        <aside class="sidebar">
-            <nav>
-                <div class="menu-group">
-                    <div class="menu-title active">概览</div>
-                    <ul class="menu-list">
-                        <li><a href="index.html" class="active">仪表盘</a></li>
-                    </ul>
-                </div>
-                <div class="menu-group">
-                    <div class="menu-title">数据保护</div>
-                    <ul class="menu-list">
-                        <li><a href="unstructured/client.html">非结构化备份</a></li>
-                        <li><a href="#">结构化备份</a></li>
-                        <li><a href="#">虚拟化备份</a></li>
-                        <li><a href="#">物理机备份</a></li>
-                    </ul>
-                </div>
-                <div class="menu-group">
-                    <div class="menu-title">运维管理</div>
-                    <ul class="menu-list">
-                        <li><a href="monitor.html">监控中心</a></li>
-                        <li><a href="system.html">系统管理</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </aside>
-
-        <main class="content">
-            <nav class="breadcrumb">
-                <span class="current">仪表盘</span>
-            </nav>
-            <h1 class="page-title">仪表盘</h1>
-
-            <div class="quick-actions">
-                <button class="btn btn-primary" onclick="location.href='unstructured/client.html'">+ 注册客户端</button>
-                <button class="btn" onclick="location.href='unstructured/storage.html'">存储管理</button>
-                <button class="btn" onclick="location.href='monitor.html'">查看告警</button>
+    <main class="dashboard-wrap">
+        <!-- 面包屑 & 时间 -->
+        <div class="page-bar">
+            <div class="page-title">
+                <span>🏠</span> 系统首页
             </div>
+            <div style="font-size:13px; color:var(--gray-500);">
+                系统时间 : <span id="sysTime">2026-05-19 10:58:54</span>
+            </div>
+        </div>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">在线客户端</div>
-                    <div class="stat-value">128</div>
-                    <div class="stat-change">↑ 4 较昨日</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">存储池总数</div>
-                    <div class="stat-value">6</div>
-                    <div class="stat-change">正常运行</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">今日备份数据量</div>
-                    <div class="stat-value">2.4 TB</div>
-                    <div class="stat-change">↑ 12%</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">待处理告警</div>
-                    <div class="stat-value" style="color: var(--danger)">3</div>
-                    <div class="stat-change down">需立即关注</div>
+        <!-- 第一行 -->
+        <div class="top-row">
+            <div class="stat-card-color bg-blue">
+                <div class="title">系统运行</div>
+                <div class="value">25</div>
+                <div class="unit">天</div>
+            </div>
+            <div class="stat-card-color bg-green">
+                <div class="title">累计保护数据</div>
+                <div class="value">12.32</div>
+                <div class="unit">GB</div>
+            </div>
+            <div class="stat-card-color bg-orange">
+                <div class="title">今日保护数据</div>
+                <div class="value">0</div>
+                <div class="unit">bytes</div>
+            </div>
+            <div class="stat-card-color bg-purple">
+                <div class="title">历史任务情况</div>
+                <div class="value">0</div>
+                <div class="unit">个</div>
+            </div>
+            <div class="task-panel">
+                <h4>任务情况</h4>
+                <div class="task-items">
+                    <div class="task-item">
+                        <div class="task-icon ok">✓</div>
+                        <div class="task-label">成功</div>
+                        <div class="task-num">0</div>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-icon warn">!</div>
+                        <div class="task-label">终止</div>
+                        <div class="task-num">0</div>
+                    </div>
+                    <div class="task-item">
+                        <div class="task-icon err">⚠</div>
+                        <div class="task-label">失败</div>
+                        <div class="task-num">0</div>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="card">
-                <div class="section-header">
-                    <h3>备份趋势（近7天）</h3>
-                    <select class="btn" style="padding: 4px 8px;">
-                        <option>近7天</option>
-                        <option>近30天</option>
-                    </select>
+        <!-- 第二行 -->
+        <div class="mid-row">
+            <!-- 已保护数据源 -->
+            <div class="panel">
+                <h4>已保护数据源</h4>
+                <div class="chart-ring">
+                    <svg width="150" height="150" viewBox="0 0 150 150">
+                        <circle cx="75" cy="75" r="55" fill="none" stroke="#e5e7eb" stroke-width="10"/>
+                        <circle cx="75" cy="75" r="55" fill="none" stroke="#8b5cf6" stroke-width="10" stroke-dasharray="345" stroke-dashoffset="310" transform="rotate(-90 75 75)"/>
+                        <!-- 刻度装饰 -->
+                        <line x1="75" y1="10" x2="75" y2="20" stroke="#e5e7eb" stroke-width="2"/>
+                        <line x1="140" y1="75" x2="130" y2="75" stroke="#e5e7eb" stroke-width="2"/>
+                        <line x1="75" y1="140" x2="75" y2="130" stroke="#e5e7eb" stroke-width="2"/>
+                        <line x1="10" y1="75" x2="20" y2="75" stroke="#e5e7eb" stroke-width="2"/>
+                    </svg>
+                    <div class="ring-inner-text">
+                        <div class="big">数据库</div>
+                        <div class="num">0</div>
+                    </div>
                 </div>
-                <div class="chart-placeholder">
-                    [ 图表占位区 ] 接入 ECharts：展示每日备份数据量与任务数趋势
+                <div style="display:flex; justify-content:center; gap:10px; font-size:11px; color:var(--gray-500); margin-top:6px;">
+                    <span><i style="display:inline-block;width:7px;height:7px;background:#8b5cf6;border-radius:50%;margin-right:2px;"></i>数据库</span>
+                    <span><i style="display:inline-block;width:7px;height:7px;background:#f59e0b;border-radius:50%;margin-right:2px;"></i>虚拟机</span>
+                    <span><i style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:2px;"></i>数据迁移</span>
+                    <span><i style="display:inline-block;width:7px;height:7px;background:#3b82f6;border-radius:50%;margin-right:2px;"></i>客户端</span>
                 </div>
             </div>
 
-            <div class="card recent-jobs">
-                <div class="section-header">
-                    <h3>最近任务动态</h3>
-                    <a href="#" style="font-size: 13px; color: var(--primary);">查看全部</a>
+            <!-- 存储数据量 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h4>存储数据量</h4>
+                    <div class="tab-pills">
+                        <button class="active">数据统计</button>
+                        <button>存储统计</button>
+                    </div>
                 </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>任务名称</th>
-                            <th>客户端</th>
-                            <th>类型</th>
-                            <th>开始时间</th>
-                            <th>耗时</th>
-                            <th>结果</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Finance-Daily-Backup</strong></td>
-                            <td>Client-Win-01</td>
-                            <td><span class="tag-pill">非结构化</span></td>
-                            <td>2024-01-15 02:00</td>
-                            <td>45 分钟</td>
-                            <td><span class="status-badge success">成功</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>DB-Archive-Weekly</strong></td>
-                            <td>Client-Linux-05</td>
-                            <td><span class="tag-pill">结构化</span></td>
-                            <td>2024-01-15 01:30</td>
-                            <td>12 分钟</td>
-                            <td><span class="status-badge success">成功</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>VM-Snapshot-01</strong></td>
-                            <td>ESXi-Cluster-A</td>
-                            <td><span class="tag-pill">虚拟化</span></td>
-                            <td>2024-01-15 00:00</td>
-                            <td>8 分钟</td>
-                            <td><span class="status-badge warning">警告</span></td>
-                        </tr>
-                    </tbody>
+                <div class="pie-wrap">
+                    <svg width="130" height="130" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" fill="#3b82f6"/>
+                        <path d="M50,50 L50,10 A40,40 0 0,1 85,25 Z" fill="#22c55e"/>
+                        <path d="M50,50 L85,25 A40,40 0 0,1 75,85 Z" fill="#f59e0b"/>
+                        <path d="M50,50 L75,85 A40,40 0 0,1 25,85 Z" fill="#8b5cf6"/>
+                        <circle cx="50" cy="50" r="22" fill="#fff"/>
+                        <text x="50" y="46" text-anchor="middle" font-size="8" fill="#6b7280">文本</text>
+                        <text x="50" y="57" text-anchor="middle" font-size="9" fill="#3b82f6" font-weight="bold">71%</text>
+                    </svg>
+                    <div class="pie-info">
+                        <div>压缩文件: 2.2%</div>
+                        <div>数据库: 0%</div>
+                        <div>虚拟机: 0%</div>
+                        <div>图片: 13.8%</div>
+                        <div>音频: 0%</div>
+                        <div>视频: 8%</div>
+                    </div>
+                </div>
+                <table class="pie-table">
+                    <tr><td>全部文件</td><td>138</td></tr>
+                    <tr><td>文本</td><td>98</td></tr>
+                    <tr><td>图片</td><td>19</td></tr>
+                    <tr><td>数据库</td><td>0</td></tr>
+                    <tr><td>虚拟机</td><td>0</td></tr>
+                    <tr><td>视频/音频</td><td>11/0</td></tr>
+                    <tr><td>其它/压缩文件</td><td>7/3</td></tr>
                 </table>
             </div>
-        </main>
-    </div>
 
-    <script src="common.js"></script>
+            <!-- 策略统计 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h4>策略统计</h4>
+                    <div class="tab-pills">
+                        <button class="active">非结构化</button>
+                        <button>数据库</button>
+                        <button>虚拟化</button>
+                        <button>复制迁移</button>
+                    </div>
+                </div>
+                <div class="policy-grid">
+                    <div class="policy-card">
+                        <div class="p-icon">🔄</div>
+                        <div class="p-name">已同步</div>
+                        <div class="p-val green">1</div>
+                    </div>
+                    <div class="policy-card">
+                        <div class="p-icon">🛡️</div>
+                        <div class="p-name">受保护数据</div>
+                        <div class="p-val green">12.32 GB</div>
+                    </div>
+                    <div class="policy-card">
+                        <div class="p-icon">💾</div>
+                        <div class="p-name">今日备份数据</div>
+                        <div class="p-val">0 bytes</div>
+                    </div>
+                </div>
+                <div style="margin-top:10px; font-size:12px; color:var(--gray-600);">数据客户端</div>
+                <div class="client-row">
+                    <div class="client-item">
+                        <div class="client-icon">🔗</div>
+                        <div class="client-label">已连接</div>
+                        <div class="client-num">1</div>
+                    </div>
+                    <div class="client-item">
+                        <div class="client-icon off">🔗</div>
+                        <div class="client-label">未连接</div>
+                        <div class="client-num">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三行：系统统计 -->
+        <div class="sys-row">
+            <div class="panel">
+                <div class="panel-header" style="margin-bottom:10px;">
+                    <h4>系统统计</h4>
+                    <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--gray-600);">
+                        节点:
+                        <select style="padding:3px 6px; border:1px solid var(--gray-300); border-radius:4px; font-size:12px;">
+                            <option>192.168.1.176</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="sys-grid">
+                    <!-- 内存 -->
+                    <div class="ring-box">
+                        <svg width="110" height="110" viewBox="0 0 110 110">
+                            <circle cx="55" cy="55" r="45" fill="none" stroke="#e5e7eb" stroke-width="8"/>
+                            <circle cx="55" cy="55" r="45" fill="none" stroke="#22c55e" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="34" stroke-linecap="round" transform="rotate(-90 55 55)"/>
+                            <text x="55" y="60" text-anchor="middle" font-size="18" font-weight="bold" fill="#374151">88%</text>
+                        </svg>
+                        <div class="ring-label"><span>🖥️</span> 系统内存</div>
+                    </div>
+
+                    <!-- CPU -->
+                    <div class="ring-box">
+                        <svg width="110" height="110" viewBox="0 0 110 110">
+                            <circle cx="55" cy="55" r="45" fill="none" stroke="#e5e7eb" stroke-width="8"/>
+                            <circle cx="55" cy="55" r="45" fill="none" stroke="#d1d5db" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="280" stroke-linecap="round" transform="rotate(-90 55 55)"/>
+                            <text x="55" y="60" text-anchor="middle" font-size="18" font-weight="bold" fill="#374151">1%</text>
+                        </svg>
+                        <div class="ring-label"><span>🖥️</span> 系统CPU</div>
+                    </div>
+
+                    <!-- 网络I/O -->
+                    <div class="io-block">
+                        <h5>网络I/O</h5>
+                        <div class="io-line">读:<span>NaN</span>/s</div>
+                        <div class="io-line">写:<span>NaN</span>/s</div>
+                    </div>
+
+                    <!-- 系统负载 -->
+                    <div class="io-block">
+                        <h5>系统负载</h5>
+                        <div class="io-line">—</div>
+                        <div class="io-line">—</div>
+                        <div class="io-line">—</div>
+                    </div>
+
+                    <!-- 速度折线图 -->
+                    <div class="chart-area">
+                        <div class="unit">单位: 速度MB/s</div>
+                        <svg class="chart-svg" viewBox="0 0 400 130" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.2"/>
+                                    <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- 网格 -->
+                            <line x1="0" y1="26" x2="400" y2="26" stroke="#f3f4f6"/>
+                            <line x1="0" y1="52" x2="400" y2="52" stroke="#f3f4f6"/>
+                            <line x1="0" y1="78" x2="400" y2="78" stroke="#f3f4f6"/>
+                            <line x1="0" y1="104" x2="400" y2="104" stroke="#f3f4f6"/>
+                            <!-- 面积 -->
+                            <polygon points="0,130 60,128 120,129 180,127 240,128 300,130 360,129 400,130 400,130 0,130" fill="url(#lineGrad)"/>
+                            <!-- 线 -->
+                            <polyline points="0,130 60,128 120,129 180,127 240,128 300,130 360,129 400,130" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+                            <!-- Y轴标签 -->
+                            <text x="4" y="125" font-size="9" fill="#9ca3af">0</text>
+                            <text x="4" y="95" font-size="9" fill="#9ca3af">0.2</text>
+                            <text x="4" y="65" font-size="9" fill="#9ca3af">0.6</text>
+                            <text x="4" y="15" font-size="9" fill="#9ca3af">1</text>
+                            <!-- X轴 -->
+                            <text x="380" y="125" font-size="9" fill="#9ca3af" text-anchor="end">10:58:54</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function updateTime(){
+            const n=new Date();
+            const s=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')+' '+
+                  String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+            document.getElementById('sysTime').textContent=s;
+        }
+        setInterval(updateTime,1000);
+        updateTime();
+    </script>
 </body>
 </html>
