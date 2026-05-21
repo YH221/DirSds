@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>监控中心 - 日志</title>
+    <link rel="stylesheet" href="css/monitor.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="../index.html" class="logo">灾备管理平台</a>
+            <nav class="top-nav">
+                <a href="../index.html">首页</a>
+                <a href="../system.html">系统管理</a>
+                <a href="index.html" class="active">监控中心</a>
+                <a href="../unstructured/client.html">非结构化备份</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <span>管理员</span>
+            <a href="#">退出</a>
+        </div>
+    </header>
+
+    <aside class="sidebar">
+        <nav class="side-nav">
+            <a href="index.html">
+                <span class="icon-monitor"></span>
+                <span>客户端监控</span>
+            </a>
+            <a href="task.html">
+                <span class="icon-task"></span>
+                <span>任务</span>
+            </a>
+            <a href="log.html" class="active">
+                <span class="icon-log"></span>
+                <span>日志</span>
+            </a>
+            <a href="report.html">
+                <span class="icon-report"></span>
+                <span>报表</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="breadcrumb-bar">
+            <ol class="breadcrumb">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="index.html">监控中心</a></li>
+                <li class="active">日志</li>
+            </ol>
+            <div class="sys-time">系统时间：2026-05-19 11:28:38</div>
+        </div>
+
+        <div class="tabs">
+            <a href="#" class="active">运行日志</a>
+            <a href="#">操作日志</a>
+        </div>
+
+        <div class="search-bar log-search">
+            <button class="btn btn-primary">
+                <span>🔍</span>
+                搜索条件
+            </button>
+            <button class="btn" id="columnFilter">
+                <span>⚙</span>
+            </button>
+        </div>
+
+        <div class="card" id="runLogTable" style="padding: 0;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>应用名称</th>
+                        <th>模块名称</th>
+                        <th>日志级别</th>
+                        <th>事件名称</th>
+                        <th>事件对象</th>
+                        <th>事件时间</th>
+                        <th>事件信息</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>非结构化</td>
+                        <td>客户端</td>
+                        <td><span class="level-info">信息</span></td>
+                        <td>数据源扫描结束</td>
+                        <td>linux176</td>
+                        <td>2026-05-18 23:00:09</td>
+                        <td class="text-ellipsis">Scan data source(/ces1) to cache file：Over，Total 5 documents scanned, total size 1.59GB</td>
+                    </tr>
+                    <tr>
+                        <td>非结构化</td>
+                        <td>客户端</td>
+                        <td><span class="level-info">信息</span></td>
+                        <td>数据源扫描开始</td>
+                        <td>linux176</td>
+                        <td>2026-05-18 23:00:09</td>
+                        <td>路径：/ces1</td>
+                    </tr>
+                    <tr>
+                        <td>非结构化</td>
+                        <td>客户端</td>
+                        <td><span class="level-info">信息</span></td>
+                        <td>数据源扫描结束</td>
+                        <td>linux176</td>
+                        <td>2026-05-18 18:00:09</td>
+                        <td class="text-ellipsis">Scan data source(/数据) to cache file：Over，Total 22 documents scanned, total size 0Byte</td>
+                    </tr>
+                    <tr>
+                        <td>非结构化</td>
+                        <td>客户端</td>
+                        <td><span class="level-info">信息</span></td>
+                        <td>数据源扫描开始</td>
+                        <td>linux176</td>
+                        <td>2026-05-18 18:00:09</td>
+                        <td>路径：/数据</td>
+                    </tr>
+                    <tr>
+                        <td>非结构化</td>
+                        <td>客户端</td>
+                        <td><span class="level-info">信息</span></td>
+                        <td>数据源扫描结束</td>
+                        <td>linux176</td>
+                        <td>2026-05-18 16:51:49</td>
+                        <td class="text-ellipsis">Scan data source(/ceshi) to cache file：Over，Total 39 documents scanned, total size 3.35GB</td>
+                    </tr>
+                    <tr>
+                        <td>非结构化</td>
+                        <td>客户端</td>
+                        <td><span class="level-info">信息</span></td>
+                        <td>数据源扫描开始</td>
+                        <td>linux176</td>
+                        <td>2026-05-18 16:51:49</td>
+                        <td>路径：/ceshi</td>
+                    </tr>
+                    <tr>
+                        <td>系统</td>
+                        <td>系统</td>
+                        <td><span class="level-warn">警告</span></td>
+                        <td>内存过载</td>
+                        <td>系统</td>
+                        <td>2026-05-18 16:47:00</td>
+                        <td>98%</td>
+                    </tr>
+                    <tr>
+                        <td>非结构化</td>
+                        <td>客户端</td>
+                        <td><span class="level-info">信息</span></td>
+                        <td>客户端重启</td>
+                        <td>linux176</td>
+                        <td>2026-05-18 16:46:02</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>非结构化</td>
+                        <td>客户端</td>
+                        <td><span class="level-info">信息</span></td>
+                        <td>数据源扫描结束</td>
+                        <td>linux176</td>
+                        <td>2026-05-18 16:46:00</td>
+                        <td class="text-ellipsis">Scan data source(/ceshi) to cache file：Over，Total 39 documents scanned, total size 3.35GB</td>
+                    </tr>
+                    <tr>
+                        <td>非结构化</td>
+                        <td>客户端</td>
+                        <td><span class="level-info">信息</span></td>
+                        <td>数据源扫描结束</td>
+                        <td>linux176</td>
+                        <td>2026-05-18 16:45:59</td>
+                        <td class="text-ellipsis">Scan data source(/ces1) to cache file：Over，Total 5 documents scanned, total size 1.59GB</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card hidden" id="opLogTable" style="padding: 0;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox"></th>
+                        <th>序号</th>
+                        <th>访问实例</th>
+                        <th>用户名称</th>
+                        <th>操作 <span class="sort-icon">⇅</span></th>
+                        <th>请求ip</th>
+                        <th>请求时间 <span class="sort-icon">⇅</span></th>
+                        <th>响应时间 <span class="sort-icon">⇅</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>1</td>
+                        <td>非结构化</td>
+                        <td>admin</td>
+                        <td>修改数据源:/数据</td>
+                        <td>192.168.1.2</td>
+                        <td>2026-05-18 16:55:30</td>
+                        <td>2026-05-18 16:55:31</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>2</td>
+                        <td>非结构化</td>
+                        <td>admin</td>
+                        <td>删除数据源:/ceshi</td>
+                        <td>192.168.1.2</td>
+                        <td>2026-05-18 16:54:56</td>
+                        <td>2026-05-18 16:54:57</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>3</td>
+                        <td>非结构化</td>
+                        <td>admin</td>
+                        <td>启用数据源:/ceshi</td>
+                        <td>192.168.1.2</td>
+                        <td>2026-05-18 16:51:45</td>
+                        <td>2026-05-18 16:51:45</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>4</td>
+                        <td>非结构化</td>
+                        <td>admin</td>
+                        <td>启用数据源:/ces1</td>
+                        <td>192.168.1.2</td>
+                        <td>2026-05-18 16:51:44</td>
+                        <td>2026-05-18 16:51:44</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>5</td>
+                        <td>非结构化</td>
+                        <td>admin</td>
+                        <td>停用数据源:/ceshi</td>
+                        <td>192.168.1.2</td>
+                        <td>2026-05-18 16:51:43</td>
+                        <td>2026-05-18 16:51:43</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>6</td>
+                        <td>非结构化</td>
+                        <td>admin</td>
+                        <td>停用数据源:/ces1</td>
+                        <td>192.168.1.2</td>
+                        <td>2026-05-18 16:51:42</td>
+                        <td>2026-05-18 16:51:42</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>7</td>
+                        <td>认证中心</td>
+                        <td>admin</td>
+                        <td>登录</td>
+                        <td>192.168.1.2</td>
+                        <td>2026-05-18 16:38:34</td>
+                        <td>2026-05-18 16:38:38</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>8</td>
+                        <td>非结构化</td>
+                        <td>admin</td>
+                        <td>删除客户端:localhost</td>
+                        <td>192.168.1.2</td>
+                        <td>2026-05-18 16:13:30</td>
+                        <td>2026-05-18 16:13:32</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>9</td>
+                        <td>非结构化</td>
+                        <td>admin</td>
+                        <td>导入客户端:localhost</td>
+                        <td>192.168.1.2</td>
+                        <td>2026-05-18 16:13:19</td>
+                        <td>2026-05-18 16:13:19</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>10</td>
+                        <td>认证中心</td>
+                        <td>admin</td>
+                        <td>登录</td>
+                        <td>192.168.1.2</td>
+                        <td>2026-05-18 15:35:31</td>
+                        <td>2026-05-18 15:35:32</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+            <div class="pagination-bar" style="padding: 0;">
+                <span class="total">共 350 条</span>
+                <div class="pagination">
+                    <button class="btn-page">&lt;</button>
+                    <button class="btn-page active">1</button>
+                    <button class="btn-page">2</button>
+                    <button class="btn-page">3</button>
+                    <button class="btn-page">4</button>
+                    <button class="btn-page">5</button>
+                    <button class="btn-page">...</button>
+                    <button class="btn-page">35</button>
+                    <button class="btn-page">&gt;</button>
+                </div>
+                <div class="page-size">
+                    <select>
+                        <option>10 条/页</option>
+                        <option>20 条/页</option>
+                        <option>50 条/页</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.querySelectorAll('.tabs a').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.tabs a').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const isRunLog = this.textContent === '运行日志';
+                document.getElementById('runLogTable').classList.toggle('hidden', !isRunLog);
+                document.getElementById('opLogTable').classList.toggle('hidden', isRunLog);
+            });
+        });
+    </script>
+</body>
+</html>

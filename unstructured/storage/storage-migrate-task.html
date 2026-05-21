@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>复制迁移任务管理 - 灾备管理平台</title>
+         <link rel="stylesheet" href="../../common.css">
+         <link rel="stylesheet" href="../../monitor/css/monitor.css">
+    <link rel="stylesheet" href="css/storage.css">
+    <script src="../../common.js"></script>
+    <script src="storage.js"></script>
+</head>
+<body>
+    <!-- 顶部导航... -->
+ <nav class="top-nav">
+        <div class="header-left">
+            <div class="logo">灾备管理平台</div>
+            <div class="top-menu">
+                <a href="../monitor/monitor-client.html">首页</a>
+                <a href="../../system.html">系统管理</a>
+                <a href="../../monitor/index.html">监控中心</a>
+                <a href="../../unstructured/client-detail.html" class="active">非结构化备份</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <span>系统管理员</span>
+            <a href="#">退出</a>
+        </div>
+    </header>
+   <aside class="sidebar">
+            <nav>
+                <div class="menu-group">
+                    <ul class="menu-list">
+                        <li><a href="../client.html">客户端管理</a></li>
+                        <li class="has-submenu">
+                            <a href="javascript:void(0);" class="submenu-toggle" onclick="toggleSubmenu(this)">
+                                <span class="menu-icon">☰</span>
+                                <span>存储管理</span>
+                                <span class="arrow">▼</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="storage-policy.html" >存储策略</a></li>
+                                <li><a href="storage-migrate-policy.html">复制迁移策略</a></li>
+                                <li><a href="storage-migrate-task.html" class="active">复制迁移任务</a></li>
+                                <li><a href="storage-offline.html">离线介质管理</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="../takeover.html" >接管管理</a></li>
+                        <li><a href="../export.html">数据导出</a></li>
+                        <li><a href="../search.html" >全文检索</a></li>
+                        <li><a href="../tags.html" >标签策略</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+    <main class="main-content">
+        <div class="breadcrumb-bar">
+            <ol class="breadcrumb">
+                <li><a href="#">首页</a></li>
+                <li><a href="#">非结构化备份</a></li>
+                <li class="active">复制迁移任务管理</li>
+            </ol>
+            <span class="sys-time">系统时间：2026-05-19 17:26:17</span>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="search-bar">
+            <div class="form-group">
+                <label>任务名称：</label>
+                <input type="text" class="input-search" placeholder="请输入任务名称">
+            </div>
+            <div class="form-group">
+                <label>开始时间：</label>
+                <input type="text" class="input-date" placeholder="请选择开始时间">
+            </div>
+            <button class="btn btn-primary">搜索</button>
+            <div style="flex:1"></div>
+            <button class="btn btn-danger">删除</button>
+        </div>
+
+        <!-- 数据表格 -->
+        <div class="card data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox"></th>
+                        <th>任务名称</th>
+                        <th>任务类型</th>
+                        <th>状态</th>
+                        <th>开始时间</th>
+                        <th>结束时间</th>
+                        <th>错误信息</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 空状态 -->
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-box">
+                                <svg class="icon" viewBox="0 0 64 64" fill="none">
+                                    <rect x="8" y="12" width="48" height="40" rx="4" stroke="#999" stroke-width="2"/>
+                                    <line x1="8" y1="20" x2="56" y2="20" stroke="#999" stroke-width="2"/>
+                                </svg>
+                                <p>暂无数据</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination-bar">
+            <span class="total">共0条数据</span>
+            <div class="pagination">
+                <button class="btn-page" disabled>&lt;</button>
+                <button class="btn-page active">0</button>
+                <button class="btn-page" disabled>&gt;</button>
+            </div>
+            <div class="page-size">
+                <select>
+                    <option>10条/页</option>
+                </select>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

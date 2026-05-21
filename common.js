@@ -16,6 +16,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// common.js 或页面底部添加
+function toggleSubmenu(element) {
+    const li = element.parentElement;
+    li.classList.toggle('open');
+    const arrow = element.querySelector('.arrow');
+    if (arrow) {
+        arrow.textContent = li.classList.contains('open') ? '▲' : '▼';
+    }
+}
+
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+// 点击遮罩关闭
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal')) {
+        e.target.classList.remove('active');
+    }
+});
+
 function openModal(id) {
     const el = document.getElementById(id);
     if (el) el.classList.add('active');

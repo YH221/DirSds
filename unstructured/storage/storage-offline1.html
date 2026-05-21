@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>离线介质管理 - 灾备管理平台</title>
+         <link rel="stylesheet" href="../../common.css">
+         <link rel="stylesheet" href="../../monitor/css/monitor.css">
+    <link rel="stylesheet" href="css/storage.css">
+    <script src="../../common.js"></script>
+    <script src="storage.js"></script>
+</head>
+<body>
+    <!-- 顶部导航... -->
+ <nav class="top-nav">
+        <div class="header-left">
+            <div class="logo">灾备管理平台</div>
+            <div class="top-menu">
+                <a href="../monitor/monitor-client.html">首页</a>
+                <a href="../../system.html">系统管理</a>
+                <a href="../../monitor/index.html">监控中心</a>
+                <a href="../../unstructured/client-detail.html" class="active">非结构化备份</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <span>系统管理员</span>
+            <a href="#">退出</a>
+        </div>
+    </header>
+    <aside class="sidebar">
+            <nav>
+                <div class="menu-group">
+                    <ul class="menu-list">
+                        <li><a href="../client.html">客户端管理</a></li>
+                        <li class="has-submenu">
+                            <a href="javascript:void(0);" class="submenu-toggle" onclick="toggleSubmenu(this)">
+                                <span class="menu-icon">☰</span>
+                                <span>存储管理</span>
+                                <span class="arrow">▼</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="storage-policy.html">存储策略</a></li>
+                                <li><a href="storage-migrate-policy.html">复制迁移策略</a></li>
+                                <li><a href="storage-migrate-task.html">复制迁移任务</a></li>
+                                <li><a href="storage-offline.html" class="active">离线介质管理</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="../takeover.html" >接管管理</a></li>
+                        <li><a href="../export.html">数据导出</a></li>
+                        <li><a href="../search.html" >全文检索</a></li>
+                        <li><a href="../tags.html" >标签策略</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+    <main class="main-content">
+        <div class="breadcrumb-bar">
+            <ol class="breadcrumb">
+                <li><a href="#">首页</a></li>
+                <li><a href="#">非结构化备份</a></li>
+                <li class="active">离线介质管理</li>
+            </ol>
+            <span class="sys-time">系统时间：2026-05-19 17:26:35</span>
+        </div>
+
+        <!-- 子标签页 -->
+        <div class="sub-tabs">
+            <a href="#" class="active">硬盘</a>
+            <a href="#">光盘</a>
+        </div>
+
+        <!-- 操作栏 -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="btn btn-primary">新建</button>
+                <button class="btn btn-primary btn-icon">
+                    <span>🔍</span> 搜索条件
+                </button>
+            </div>
+        </div>
+
+        <!-- 数据表格 -->
+        <div class="card data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>设备路径</th>
+                        <th>已用容量 ↕</th>
+                        <th>总容量 ↕</th>
+                        <th>类型</th>
+                        <th>状态</th>
+                        <th>创建时间</th>
+                        <th>客户端ID</th>
+                        <th>导出任务</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="10">
+                            <div class="empty-box">
+                                <svg class="icon" viewBox="0 0 64 64" fill="none">
+                                    <rect x="8" y="12" width="48" height="40" rx="4" stroke="#999" stroke-width="2"/>
+                                    <line x1="8" y1="20" x2="56" y2="20" stroke="#999" stroke-width="2"/>
+                                </svg>
+                                <p>暂无数据</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- 错误提示 -->
+    <!-- <div class="toast toast-error" id="errorToast">
+        <span>✕</span> 设备路径不存在
+    </div> -->
+
+    <script>
+        // 模拟显示错误提示
+        setTimeout(() => {
+            document.getElementById('errorToast').classList.add('show');
+            setTimeout(() => {
+                document.getElementById('errorToast').classList.remove('show');
+            }, 3000);
+        }, 500);
+    </script>
+</body>
+</html>

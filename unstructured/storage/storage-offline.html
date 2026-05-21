@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>离线介质管理 - 灾备管理平台</title>
+    <link rel="stylesheet" href="../../common.css">
+    <link rel="stylesheet" href="../../monitor/css/monitor.css">
+    <link rel="stylesheet" href="css/storage.css">
+    <script src="../../common.js"></script>
+    <script src="storage.js"></script>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <nav class="top-nav">
+        <div class="header-left">
+            <div class="logo">灾备管理平台</div>
+            <div class="top-menu">
+                <a href="../monitor/monitor-client.html">首页</a>
+                <a href="../../system.html">系统管理</a>
+                <a href="../../monitor/index.html">监控中心</a>
+                <a href="../../unstructured/client-detail.html" class="active">非结构化备份</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <span>系统管理员</span>
+            <a href="#">退出</a>
+        </div>
+    </header>
+
+    <!-- 左侧边栏 -->
+   <aside class="sidebar">
+            <nav>
+                <div class="menu-group">
+                    <ul class="menu-list">
+                        <li><a href="./client.html">客户端管理</a></li>
+                        <li class="has-submenu">
+                            <a href="javascript:void(0);" class="submenu-toggle" onclick="toggleSubmenu(this)">
+                                <span class="menu-icon">☰</span>
+                                <span>存储管理</span>
+                                <span class="arrow">▼</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="storage-policy.html" >存储策略</a></li>
+                                <li><a href="storage-migrate-policy.html" >复制迁移策略</a></li>
+                                <li><a href="storage-migrate-task.html" >复制迁移任务</a></li>
+                                <li><a href="storage-offline.html" class="active">离线介质管理</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="../takeover.html" >接管管理</a></li>
+                        <li><a href="../export.html">数据导出</a></li>
+                        <li><a href="../search.html" >全文检索</a></li>
+                        <li><a href="../tags.html" >标签策略</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <div class="breadcrumb-bar">
+            <ol class="breadcrumb">
+                <li><a href="#">首页</a></li>
+                <li><a href="#">非结构化备份</a></li>
+                <li class="active">离线介质管理</li>
+            </ol>
+            <span class="sys-time">系统时间：2026-05-19 17:26:35</span>
+        </div>
+
+        <!-- 子标签页 -->
+        <div class="sub-tabs">
+            <a href="#" class="tab-trigger active" data-target="tab-harddisk">硬盘</a>
+            <a href="#" class="tab-trigger" data-target="tab-cdrom">光盘</a>
+        </div>
+
+        <!-- 硬盘 Tab 内容 -->
+        <div id="tab-harddisk" class="tab-content active">
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <button class="btn btn-primary" id="btn-new-harddisk">新建</button>
+                    <button class="btn btn-primary btn-icon">
+                        <span>🔍</span> 搜索条件
+                    </button>
+                </div>
+            </div>
+            <div class="card data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>设备路径</th>
+                            <th>已用容量 ↕</th>
+                            <th>总容量 ↕</th>
+                            <th>类型</th>
+                            <th>状态</th>
+                            <th>创建时间</th>
+                            <th>客户端ID</th>
+                            <th>导出任务</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="10">
+                                <div class="empty-box">
+                                    <svg class="icon" viewBox="0 0 64 64" fill="none">
+                                        <rect x="8" y="12" width="48" height="40" rx="4" stroke="#999" stroke-width="2"/>
+                                        <line x1="8" y1="20" x2="56" y2="20" stroke="#999" stroke-width="2"/>
+                                    </svg>
+                                    <p>暂无数据</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 光盘 Tab 内容 -->
+        <div id="tab-cdrom" class="tab-content">
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <button class="btn btn-primary btn-icon">
+                        <span>🔍</span> 搜索条件
+                    </button>
+                </div>
+            </div>
+            <div class="card data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>用途 ↕</th>
+                            <th>已用容量 ↕</th>
+                            <th>总容量 ↕</th>
+                            <th>类型</th>
+                            <th>创建时间</th>
+                            <th>客户端ID</th>
+                            <th>导出任务</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="9">
+                                <div class="empty-box">
+                                    <svg class="icon" viewBox="0 0 64 64" fill="none">
+                                        <rect x="8" y="12" width="48" height="40" rx="4" stroke="#999" stroke-width="2"/>
+                                        <line x1="8" y1="20" x2="56" y2="20" stroke="#999" stroke-width="2"/>
+                                    </svg>
+                                    <p>暂无数据</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- 新建弹窗 -->
+    <div id="modal-new" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>新建</h3>
+                <button class="modal-close" id="btn-close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-new">
+                    <div class="form-row">
+                        <label class="form-label"><span class="required">*</span>编号：</label>
+                        <div class="form-input">
+                            <input type="text" placeholder="请输入介质编号" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">序列号：</label>
+                        <div class="form-input">
+                            <input type="text" placeholder="请输入序列号">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label"><span class="required">*</span>路径：</label>
+                        <div class="form-input">
+                            <input type="text" placeholder="请输入介质路径" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label"><span class="required">*</span>类型：</label>
+                        <div class="form-input">
+                            <select required>
+                                <option value="">请选择类型</option>
+                                <option value="sas">SAS 15K</option>
+                                <option value="ssd">SSD NVMe</option>
+                                <option value="sata">SATA 7.2K</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="btn-cancel">取消</button>
+                <button class="btn btn-primary" id="btn-confirm">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 错误提示（演示用） -->
+    <!-- <div class="toast toast-error" id="errorToast">
+        <span>✕</span> 设备路径不存在
+    </div> -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Tab 切换逻辑
+            document.querySelectorAll('.sub-tabs .tab-trigger').forEach(trigger => {
+                trigger.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll('.sub-tabs .tab-trigger').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    trigger.classList.add('active');
+                    document.getElementById(trigger.dataset.target).classList.add('active');
+                });
+            });
+
+            // 2. 弹窗控制逻辑
+            const modal = document.getElementById('modal-new');
+            const openBtn = document.getElementById('btn-new-harddisk');
+            const closeBtn = document.getElementById('btn-close-modal');
+            const cancelBtn = document.getElementById('btn-cancel');
+            const confirmBtn = document.getElementById('btn-confirm');
+            const form = document.getElementById('form-new');
+
+            function openModal() { modal.classList.add('show'); }
+            function closeModal() { modal.classList.remove('show'); form.reset(); }
+
+            if (openBtn) openBtn.addEventListener('click', openModal);
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', () => {
+                    if (form.checkValidity()) {
+                        alert('演示成功：新建请求已提交');
+                        closeModal();
+                    } else {
+                        form.reportValidity();
+                    }
+                });
+            }
+
+            // 3. 侧边栏子菜单展开/收起
+            window.toggleSubmenu = function(el) {
+                const parent = el.closest('.has-submenu');
+                parent.classList.toggle('open');
+            };
+
+            // 4. 模拟 Toast 提示（演示用，3秒后自动消失）
+            setTimeout(() => {
+                const toast = document.getElementById('errorToast');
+                if (toast) {
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 3000);
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

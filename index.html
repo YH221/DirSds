@@ -3,240 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能数据安全保护平台</title>
-    <link rel="stylesheet" href="common.css">
+    <title>灾备管理平台 - 首页</title>
     <style>
-        /* 顶部导航 - 首页专用深色风格 */
-        .top-nav { background: #1f2937; }
-        .platform-title { display:flex; align-items:center; gap:10px; color:#fff; font-size:15px; font-weight:600; }
-        .platform-title .logo-mark { font-size:22px; font-weight:800; line-height:1; color:#fff; }
-        .platform-title .logo-mark span { color: #10b981; }
-        .platform-title small { display:block; font-size:10px; color:#9ca3af; font-weight:normal; letter-spacing:0.3px; margin-top:-2px; }
-        .top-menu a { color: #d1d5db; padding:6px 14px; }
-        .top-menu a:hover { color:#fff; }
-        .top-menu a.active { background: #10b981; color:#fff; border-radius:4px; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; background:#f5f6fa; color:#333; font-size:14px; }
 
-        /* 主内容区 - 首页无侧边栏，全宽 */
-        .dashboard-wrap { padding: 16px 24px; width:100%; box-sizing:border-box; }
+        /* 顶部导航 - 白色简洁风格 */
+        .header { background:#fff; border-bottom:1px solid #e8e8e8; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; position:fixed; top:0; left:0; right:0; z-index:100; }
+        .header-left { display:flex; align-items:center; gap:32px; }
+        .logo { font-size:18px; font-weight:700; color:#2563eb; letter-spacing:0.5px; }
+        .nav { display:flex; gap:8px; }
+        .nav a { padding:6px 16px; border-radius:4px; color:#666; text-decoration:none; font-size:14px; transition:all .2s; }
+        .nav a:hover { color:#2563eb; }
+        .nav a.active { background:#eff6ff; color:#2563eb; }
+        .header-right { display:flex; align-items:center; gap:16px; color:#666; font-size:13px; }
+        .header-right a { color:#666; text-decoration:none; }
+        .header-right a:hover { color:#2563eb; }
 
-        /* 面包屑栏 */
-        .page-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-        .page-title { display:flex; align-items:center; gap:6px; color:var(--gray-700); font-size:14px; font-weight:500; }
+        /* 主内容区 - 无左侧菜单，直接展开 */
+        .main { margin-top:56px; padding:20px 24px; }
 
-        /* 第一行：统计卡片 + 任务 */
-        .top-row { display:grid; grid-template-columns: repeat(4, 1fr) 260px; gap:16px; margin-bottom:16px; }
-        @media (max-width: 1200px){ .top-row { grid-template-columns: repeat(2, 1fr); } .task-panel { grid-column: span 2; } }
+        /* 面包屑 */
+        .breadcrumb { color:#999; font-size:13px; margin-bottom:16px; }
+        .breadcrumb a { color:#999; text-decoration:none; }
+        .breadcrumb a:hover { color:#2563eb; }
+        .breadcrumb .sep { margin:0 6px; }
 
-        .stat-card-color { position:relative; padding:18px 20px; border-radius:6px; color:#fff; overflow:hidden; min-height:110px; display:flex; flex-direction:column; justify-content:center; }
-        .stat-card-color::after { content:''; position:absolute; right:12px; bottom:6px; width:70px; height:70px; background-repeat:no-repeat; background-position:center; background-size:contain; opacity:0.12; }
-        .stat-card-color.bg-blue::after { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42'/%3E%3C/svg%3E"); }
-        .stat-card-color.bg-green::after { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z'/%3E%3C/svg%3E"); }
-        .stat-card-color.bg-orange::after { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3C/svg%3E"); }
-        .stat-card-color.bg-purple::after { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Crect x='2' y='2' width='20' height='8' rx='2' ry='2'/%3E%3Crect x='2' y='14' width='20' height='8' rx='2' ry='2'/%3E%3Cline x1='6' y1='6' x2='6' y2='6'/%3E%3Cline x1='6' y1='18' x2='6' y2='18'/%3E%3C/svg%3E"); }
+        /* 页面标题 */
+        .page-title { font-size:20px; font-weight:600; color:#1f2937; margin-bottom:20px; }
 
-        .stat-card-color .title { font-size:14px; opacity:0.95; margin-bottom:10px; position:relative; z-index:1; }
-        .stat-card-color .value { font-size:36px; font-weight:800; line-height:1; position:relative; z-index:1; }
-        .stat-card-color .unit { font-size:13px; opacity:0.9; margin-top:6px; position:relative; z-index:1; }
-        .bg-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .bg-green { background: linear-gradient(135deg, #22c55e, #16a34a); }
-        .bg-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .bg-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        /* 统计卡片行 */
+        .stats-row { display:grid; grid-template-columns:repeat(4, 1fr) 280px; gap:16px; margin-bottom:20px; }
+        @media (max-width:1200px){ .stats-row { grid-template-columns:repeat(2, 1fr); } .task-box { grid-column:span 2; } }
 
-        .task-panel { background:#fff; border:1px solid var(--gray-200); border-radius:6px; padding:14px 16px; display:flex; flex-direction:column; }
-        .task-panel h4 { font-size:14px; color:var(--gray-800); margin-bottom:10px; font-weight:600; }
-        .task-items { display:flex; justify-content:space-around; align-items:center; flex:1; }
+        .stat-card { background:#fff; border-radius:8px; padding:20px; position:relative; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+        .stat-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; }
+        .stat-card.blue::before { background:#3b82f6; }
+        .stat-card.green::before { background:#22c55e; }
+        .stat-card.orange::before { background:#f59e0b; }
+        .stat-card.purple::before { background:#8b5cf6; }
+
+        .stat-card .label { color:#999; font-size:13px; margin-bottom:12px; }
+        .stat-card .value { font-size:32px; font-weight:700; color:#1f2937; line-height:1; }
+        .stat-card .unit { color:#999; font-size:13px; margin-top:6px; }
+        .stat-card .icon-bg { position:absolute; right:16px; top:50%; transform:translateY(-50%); width:48px; height:48px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:20px; opacity:.15; }
+        .stat-card.blue .icon-bg { background:#3b82f6; }
+        .stat-card.green .icon-bg { background:#22c55e; }
+        .stat-card.orange .icon-bg { background:#f59e0b; }
+        .stat-card.purple .icon-bg { background:#8b5cf6; }
+
+        .task-box { background:#fff; border-radius:8px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+        .task-box h4 { font-size:14px; color:#666; font-weight:500; margin-bottom:16px; }
+        .task-list { display:flex; justify-content:space-around; align-items:center; }
         .task-item { text-align:center; }
-        .task-icon { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; margin:0 auto 6px; }
-        .task-icon.ok { background:#d1fae5; color:#059669; }
-        .task-icon.warn { background:#fef3c7; color:#d97706; }
+        .task-icon { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-size:16px; }
+        .task-icon.ok { background:#dcfce7; color:#16a34a; }
+        .task-icon.warn { background:#fef9c3; color:#ca8a04; }
         .task-icon.err { background:#fee2e2; color:#dc2626; }
-        .task-label { font-size:12px; color:var(--gray-500); }
-        .task-num { font-size:16px; font-weight:700; color:var(--gray-800); }
+        .task-name { color:#666; font-size:12px; margin-bottom:4px; }
+        .task-num { font-size:18px; font-weight:600; color:#1f2937; }
 
         /* 中部三栏 */
-        .mid-row { display:grid; grid-template-columns: 1fr 1.3fr 1fr; gap:16px; margin-bottom:16px; }
-        @media (max-width: 1100px){ .mid-row { grid-template-columns:1fr; } }
-        .panel { background:#fff; border:1px solid var(--gray-200); border-radius:6px; padding:16px; }
+        .mid-row { display:grid; grid-template-columns:1fr 1.2fr 1fr; gap:16px; margin-bottom:20px; }
+        @media (max-width:1100px){ .mid-row { grid-template-columns:1fr; } }
 
-        .panel-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
-        .panel-header h4 { font-size:14px; color:var(--gray-800); font-weight:600; margin:0; }
-        .tab-pills { display:flex; gap:4px; }
-        .tab-pills button { border:1px solid var(--gray-200); background:var(--gray-50); padding:3px 10px; font-size:12px; border-radius:4px; cursor:pointer; color:var(--gray-600); }
-        .tab-pills button.active { background:#6b7280; color:#fff; border-color:#6b7280; }
+        .panel { background:#fff; border-radius:8px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+        .panel-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+        .panel-head h4 { font-size:15px; font-weight:600; color:#1f2937; }
+        .tabs { display:flex; gap:4px; }
+        .tabs button { padding:4px 12px; border:1px solid #e5e7eb; background:#f9fafb; border-radius:4px; font-size:12px; color:#666; cursor:pointer; }
+        .tabs button.active { background:#6b7280; color:#fff; border-color:#6b7280; }
 
-        /* 图表简单模拟 */
-        .chart-ring { display:flex; justify-content:center; align-items:center; height:170px; position:relative; }
-        .ring-inner-text { position:absolute; text-align:center; }
-        .ring-inner-text .big { font-size:12px; color:var(--gray-500); }
-        .ring-inner-text .num { font-size:14px; color:var(--gray-700); font-weight:600; }
+        /* 环形图 */
+        .ring-chart { display:flex; justify-content:center; align-items:center; height:160px; position:relative; }
+        .ring-info { position:absolute; text-align:center; }
+        .ring-info .num { font-size:20px; font-weight:700; color:#1f2937; }
+        .ring-info .txt { font-size:12px; color:#999; }
 
-        .pie-wrap { display:flex; align-items:center; gap:12px; }
-        .pie-info { font-size:11px; color:var(--gray-500); line-height:1.9; flex:1; }
-        .pie-table { width:100%; font-size:12px; border-collapse:collapse; margin-top:8px; }
-        .pie-table td { padding:6px 8px; border-bottom:1px solid var(--gray-100); color:var(--gray-700); }
-        .pie-table td:last-child { text-align:right; font-weight:500; }
+        .legend { display:flex; justify-content:center; gap:12px; margin-top:8px; flex-wrap:wrap; }
+        .legend span { font-size:12px; color:#666; display:flex; align-items:center; gap:4px; }
+        .dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
 
-        .policy-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
-        .policy-card { text-align:center; padding:10px 4px; border:1px solid var(--gray-100); border-radius:6px; }
-        .policy-card .p-icon { width:38px; height:38px; margin:0 auto 6px; background:#e0f2fe; color:#0284c7; display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:16px; }
-        .policy-card .p-name { font-size:11px; color:var(--gray-500); margin-bottom:4px; }
-        .policy-card .p-val { font-size:16px; font-weight:700; color:var(--gray-800); }
-        .policy-card .p-val.green { color:#10b981; }
+        /* 饼图+表格 */
+        .pie-box { display:flex; gap:16px; align-items:center; }
+        .pie-info { font-size:12px; color:#666; line-height:2; }
+        .data-table { width:100%; margin-top:12px; border-collapse:collapse; font-size:12px; }
+        .data-table td { padding:8px; border-bottom:1px solid #f0f0f0; color:#666; }
+        .data-table td:last-child { text-align:right; color:#1f2937; font-weight:500; }
 
-        .client-row { display:flex; justify-content:space-around; margin-top:12px; padding-top:12px; border-top:1px solid var(--gray-100); }
-        .client-item { text-align:center; }
-        .client-icon { width:32px; height:32px; margin:0 auto 4px; background:#d1fae5; color:#059669; display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:14px; }
+        /* 策略卡片 */
+        .policy-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; }
+        .policy-card { border:1px solid #f0f0f0; border-radius:6px; padding:16px 8px; text-align:center; }
+        .p-icon { width:36px; height:36px; margin:0 auto 8px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+        .p-icon.sync { background:#dbeafe; color:#2563eb; }
+        .p-icon.shield { background:#dcfce7; color:#16a34a; }
+        .p-icon.disk { background:#fef3c7; color:#d97706; }
+        .p-name { font-size:12px; color:#999; margin-bottom:4px; }
+        .p-val { font-size:16px; font-weight:700; color:#1f2937; }
+        .p-val.green { color:#16a34a; }
+
+        .client-bar { display:flex; justify-content:space-around; margin-top:16px; padding-top:16px; border-top:1px solid #f0f0f0; }
+        .client-it { text-align:center; }
+        .client-icon { width:32px; height:32px; margin:0 auto 4px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:14px; }
+        .client-icon.on { background:#dcfce7; color:#16a34a; }
         .client-icon.off { background:#f3f4f6; color:#9ca3af; }
-        .client-label { font-size:11px; color:var(--gray-500); }
-        .client-num { font-size:14px; font-weight:600; color:var(--gray-800); }
+        .client-label { font-size:11px; color:#999; }
+        .client-num { font-size:14px; font-weight:600; color:#1f2937; }
 
         /* 底部系统统计 */
-        .sys-row .panel { padding:14px 16px; }
-        .sys-grid { display:grid; grid-template-columns: 140px 140px 140px 140px 1fr; gap:16px; align-items:start; }
-        @media (max-width: 1200px){ .sys-grid { grid-template-columns:1fr 1fr; } }
+        .sys-panel { background:#fff; border-radius:8px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+        .sys-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+        .sys-head h4 { font-size:15px; font-weight:600; color:#1f2937; }
+        .node-select { padding:4px 10px; border:1px solid #e5e7eb; border-radius:4px; font-size:12px; color:#666; }
 
-        .ring-box { text-align:center; }
-        .ring-box .ring-label { font-size:12px; color:var(--gray-600); margin-top:6px; display:flex; align-items:center; justify-content:center; gap:4px; }
-        .ring-value { font-size:18px; font-weight:700; fill:#374151; }
+        .sys-grid { display:grid; grid-template-columns:120px 120px 120px 120px 1fr; gap:20px; align-items:start; }
+        @media (max-width:1200px){ .sys-grid { grid-template-columns:1fr 1fr; } }
 
-        .io-block h5 { font-size:13px; color:var(--gray-700); margin-bottom:10px; font-weight:500; }
-        .io-line { font-size:12px; color:var(--gray-500); line-height:2.2; }
-        .io-line span { color:#3b82f6; font-weight:500; }
+        .ring-sm { text-align:center; }
+        .ring-sm svg { display:block; margin:0 auto; }
+        .ring-sm .name { font-size:12px; color:#666; margin-top:6px; display:flex; align-items:center; justify-content:center; gap:4px; }
 
-        .chart-area { position:relative; height:160px; }
-        .chart-area .unit { font-size:11px; color:var(--gray-400); margin-bottom:4px; }
-        .chart-svg { width:100%; height:130px; }
+        .io-info h5 { font-size:13px; color:#666; margin-bottom:10px; font-weight:500; }
+        .io-line { font-size:12px; color:#999; line-height:2.2; }
+        .io-line span { color:#3b82f6; }
+
+        .chart-box { min-height:140px; }
+        .chart-box .unit { font-size:11px; color:#bbb; margin-bottom:4px; }
     </style>
 </head>
 <body>
-    <header class="top-nav">
-        <div style="display:flex; align-items:center; gap:14px;">
-            <div class="platform-title">
-                <div class="logo-mark">D<span>ir</span></div>
-                <div>
-                    智能数据安全保护平台
-                    <small>Smart data security protection platform</small>
-                </div>
-            </div>
-            <nav class="top-menu" style="margin-left:10px;">
-                <a href="#" class="active">概览</a>
-                <a href="#">监控中心</a>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">灾备管理平台</div>
+            <nav class="nav">
+                <a href="index.html" class="active">概览</a>
+                <a href="system.html">系统管理</a>
+                <a href="monitor/index.html">监控中心</a>
                 <a href="unstructured/client.html">非结构化备份</a>
-                <a href="#">虚拟化备份</a>
-                <a href="#">裸机备份</a>
-                <a href="#">数据库备份</a>
-                <a href="#">复制迁移</a>
-                <a href="#">医疗检索</a>
-                <a href="#">CDP保护</a>
-                <a href="#">更多菜单 ▼</a>
             </nav>
         </div>
-        <div class="user-info">
-            <span style="color:#9ca3af; margin-right:8px;">🖥️</span>
-            <span>系统管理员 ▼</span>
+        <div class="header-right">
+            <span>管理员</span>
+            <a href="login.html">退出</a>
         </div>
     </header>
 
-    <main class="dashboard-wrap">
-        <!-- 面包屑 & 时间 -->
-        <div class="page-bar">
-            <div class="page-title">
-                <span>🏠</span> 系统首页
-            </div>
-            <div style="font-size:13px; color:var(--gray-500);">
-                系统时间 : <span id="sysTime">2026-05-19 10:58:54</span>
-            </div>
+    <!-- 主内容 -->
+    <main class="main">
+        <!-- 面包屑 -->
+        <div class="breadcrumb">
+            <a href="index.html">首页</a>
         </div>
 
-        <!-- 第一行 -->
-        <div class="top-row">
-            <div class="stat-card-color bg-blue">
-                <div class="title">系统运行</div>
+        <h1 class="page-title">系统首页</h1>
+
+        <!-- 统计卡片 -->
+        <div class="stats-row">
+            <div class="stat-card blue">
+                <div class="label">系统运行</div>
                 <div class="value">25</div>
                 <div class="unit">天</div>
+                <div class="icon-bg">⚙</div>
             </div>
-            <div class="stat-card-color bg-green">
-                <div class="title">累计保护数据</div>
+            <div class="stat-card green">
+                <div class="label">累计保护数据</div>
                 <div class="value">12.32</div>
                 <div class="unit">GB</div>
+                <div class="icon-bg">📁</div>
             </div>
-            <div class="stat-card-color bg-orange">
-                <div class="title">今日保护数据</div>
+            <div class="stat-card orange">
+                <div class="label">今日保护数据</div>
                 <div class="value">0</div>
                 <div class="unit">bytes</div>
+                <div class="icon-bg">📄</div>
             </div>
-            <div class="stat-card-color bg-purple">
-                <div class="title">历史任务情况</div>
+            <div class="stat-card purple">
+                <div class="label">历史任务情况</div>
                 <div class="value">0</div>
                 <div class="unit">个</div>
+                <div class="icon-bg">🖥</div>
             </div>
-            <div class="task-panel">
+            <div class="task-box">
                 <h4>任务情况</h4>
-                <div class="task-items">
+                <div class="task-list">
                     <div class="task-item">
                         <div class="task-icon ok">✓</div>
-                        <div class="task-label">成功</div>
+                        <div class="task-name">成功</div>
                         <div class="task-num">0</div>
                     </div>
                     <div class="task-item">
                         <div class="task-icon warn">!</div>
-                        <div class="task-label">终止</div>
+                        <div class="task-name">终止</div>
                         <div class="task-num">0</div>
                     </div>
                     <div class="task-item">
-                        <div class="task-icon err">⚠</div>
-                        <div class="task-label">失败</div>
+                        <div class="task-icon err">✕</div>
+                        <div class="task-name">失败</div>
                         <div class="task-num">0</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 第二行 -->
+        <!-- 中部三栏 -->
         <div class="mid-row">
             <!-- 已保护数据源 -->
             <div class="panel">
                 <h4>已保护数据源</h4>
-                <div class="chart-ring">
-                    <svg width="150" height="150" viewBox="0 0 150 150">
-                        <circle cx="75" cy="75" r="55" fill="none" stroke="#e5e7eb" stroke-width="10"/>
-                        <circle cx="75" cy="75" r="55" fill="none" stroke="#8b5cf6" stroke-width="10" stroke-dasharray="345" stroke-dashoffset="310" transform="rotate(-90 75 75)"/>
-                        <!-- 刻度装饰 -->
-                        <line x1="75" y1="10" x2="75" y2="20" stroke="#e5e7eb" stroke-width="2"/>
-                        <line x1="140" y1="75" x2="130" y2="75" stroke="#e5e7eb" stroke-width="2"/>
-                        <line x1="75" y1="140" x2="75" y2="130" stroke="#e5e7eb" stroke-width="2"/>
-                        <line x1="10" y1="75" x2="20" y2="75" stroke="#e5e7eb" stroke-width="2"/>
+                <div class="ring-chart">
+                    <svg width="140" height="140" viewBox="0 0 140 140">
+                        <circle cx="70" cy="70" r="55" fill="none" stroke="#f0f0f0" stroke-width="10"/>
+                        <circle cx="70" cy="70" r="55" fill="none" stroke="#8b5cf6" stroke-width="10" stroke-dasharray="345" stroke-dashoffset="310" transform="rotate(-90 70 70)"/>
+                        <!-- 刻度 -->
+                        <g stroke="#e5e7eb" stroke-width="2">
+                            <line x1="70" y1="8" x2="70" y2="18"/>
+                            <line x1="132" y1="70" x2="122" y2="70"/>
+                            <line x1="70" y1="132" x2="70" y2="122"/>
+                            <line x1="8" y1="70" x2="18" y2="70"/>
+                        </g>
                     </svg>
-                    <div class="ring-inner-text">
-                        <div class="big">数据库</div>
+                    <div class="ring-info">
                         <div class="num">0</div>
+                        <div class="txt">数据库</div>
                     </div>
                 </div>
-                <div style="display:flex; justify-content:center; gap:10px; font-size:11px; color:var(--gray-500); margin-top:6px;">
-                    <span><i style="display:inline-block;width:7px;height:7px;background:#8b5cf6;border-radius:50%;margin-right:2px;"></i>数据库</span>
-                    <span><i style="display:inline-block;width:7px;height:7px;background:#f59e0b;border-radius:50%;margin-right:2px;"></i>虚拟机</span>
-                    <span><i style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:2px;"></i>数据迁移</span>
-                    <span><i style="display:inline-block;width:7px;height:7px;background:#3b82f6;border-radius:50%;margin-right:2px;"></i>客户端</span>
+                <div class="legend">
+                    <span><i class="dot" style="background:#8b5cf6;"></i>数据库</span>
+                    <span><i class="dot" style="background:#f59e0b;"></i>虚拟机</span>
+                    <span><i class="dot" style="background:#22c55e;"></i>数据迁移</span>
+                    <span><i class="dot" style="background:#3b82f6;"></i>客户端</span>
                 </div>
             </div>
 
             <!-- 存储数据量 -->
             <div class="panel">
-                <div class="panel-header">
+                <div class="panel-head">
                     <h4>存储数据量</h4>
-                    <div class="tab-pills">
+                    <div class="tabs">
                         <button class="active">数据统计</button>
                         <button>存储统计</button>
                     </div>
                 </div>
-                <div class="pie-wrap">
-                    <svg width="130" height="130" viewBox="0 0 100 100">
+                <div class="pie-box">
+                    <svg width="120" height="120" viewBox="0 0 100 100">
                         <circle cx="50" cy="50" r="40" fill="#3b82f6"/>
                         <path d="M50,50 L50,10 A40,40 0 0,1 85,25 Z" fill="#22c55e"/>
                         <path d="M50,50 L85,25 A40,40 0 0,1 75,85 Z" fill="#f59e0b"/>
                         <path d="M50,50 L75,85 A40,40 0 0,1 25,85 Z" fill="#8b5cf6"/>
-                        <circle cx="50" cy="50" r="22" fill="#fff"/>
-                        <text x="50" y="46" text-anchor="middle" font-size="8" fill="#6b7280">文本</text>
+                        <circle cx="50" cy="50" r="20" fill="#fff"/>
+                        <text x="50" y="47" text-anchor="middle" font-size="8" fill="#999">文本</text>
                         <text x="50" y="57" text-anchor="middle" font-size="9" fill="#3b82f6" font-weight="bold">71%</text>
                     </svg>
                     <div class="pie-info">
@@ -248,7 +264,7 @@
                         <div>视频: 8%</div>
                     </div>
                 </div>
-                <table class="pie-table">
+                <table class="data-table">
                     <tr><td>全部文件</td><td>138</td></tr>
                     <tr><td>文本</td><td>98</td></tr>
                     <tr><td>图片</td><td>19</td></tr>
@@ -261,9 +277,9 @@
 
             <!-- 策略统计 -->
             <div class="panel">
-                <div class="panel-header">
+                <div class="panel-head">
                     <h4>策略统计</h4>
-                    <div class="tab-pills">
+                    <div class="tabs">
                         <button class="active">非结构化</button>
                         <button>数据库</button>
                         <button>虚拟化</button>
@@ -272,30 +288,30 @@
                 </div>
                 <div class="policy-grid">
                     <div class="policy-card">
-                        <div class="p-icon">🔄</div>
+                        <div class="p-icon sync">↻</div>
                         <div class="p-name">已同步</div>
                         <div class="p-val green">1</div>
                     </div>
                     <div class="policy-card">
-                        <div class="p-icon">🛡️</div>
+                        <div class="p-icon shield">🛡</div>
                         <div class="p-name">受保护数据</div>
                         <div class="p-val green">12.32 GB</div>
                     </div>
                     <div class="policy-card">
-                        <div class="p-icon">💾</div>
+                        <div class="p-icon disk">💾</div>
                         <div class="p-name">今日备份数据</div>
                         <div class="p-val">0 bytes</div>
                     </div>
                 </div>
-                <div style="margin-top:10px; font-size:12px; color:var(--gray-600);">数据客户端</div>
-                <div class="client-row">
-                    <div class="client-item">
-                        <div class="client-icon">🔗</div>
+                <div style="margin-top:12px; font-size:13px; color:#666;">数据客户端</div>
+                <div class="client-bar">
+                    <div class="client-it">
+                        <div class="client-icon on">●</div>
                         <div class="client-label">已连接</div>
                         <div class="client-num">1</div>
                     </div>
-                    <div class="client-item">
-                        <div class="client-icon off">🔗</div>
+                    <div class="client-it">
+                        <div class="client-icon off">○</div>
                         <div class="client-label">未连接</div>
                         <div class="client-num">0</div>
                     </div>
@@ -303,82 +319,77 @@
             </div>
         </div>
 
-        <!-- 第三行：系统统计 -->
-        <div class="sys-row">
-            <div class="panel">
-                <div class="panel-header" style="margin-bottom:10px;">
-                    <h4>系统统计</h4>
-                    <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--gray-600);">
-                        节点:
-                        <select style="padding:3px 6px; border:1px solid var(--gray-300); border-radius:4px; font-size:12px;">
-                            <option>192.168.1.176</option>
-                        </select>
-                    </div>
+        <!-- 系统统计 -->
+        <div class="sys-panel">
+            <div class="sys-head">
+                <h4>系统统计</h4>
+                <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:#666;">
+                    节点:
+                    <select class="node-select">
+                        <option>192.168.1.176</option>
+                    </select>
                 </div>
-                <div class="sys-grid">
-                    <!-- 内存 -->
-                    <div class="ring-box">
-                        <svg width="110" height="110" viewBox="0 0 110 110">
-                            <circle cx="55" cy="55" r="45" fill="none" stroke="#e5e7eb" stroke-width="8"/>
-                            <circle cx="55" cy="55" r="45" fill="none" stroke="#22c55e" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="34" stroke-linecap="round" transform="rotate(-90 55 55)"/>
-                            <text x="55" y="60" text-anchor="middle" font-size="18" font-weight="bold" fill="#374151">88%</text>
-                        </svg>
-                        <div class="ring-label"><span>🖥️</span> 系统内存</div>
-                    </div>
+            </div>
+            <div class="sys-grid">
+                <!-- 内存 -->
+                <div class="ring-sm">
+                    <svg width="100" height="100" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="#f0f0f0" stroke-width="8"/>
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="#22c55e" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="32" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                        <text x="50" y="55" text-anchor="middle" font-size="16" font-weight="bold" fill="#374151">88%</text>
+                    </svg>
+                    <div class="name"><span>🖥</span> 系统内存</div>
+                </div>
 
-                    <!-- CPU -->
-                    <div class="ring-box">
-                        <svg width="110" height="110" viewBox="0 0 110 110">
-                            <circle cx="55" cy="55" r="45" fill="none" stroke="#e5e7eb" stroke-width="8"/>
-                            <circle cx="55" cy="55" r="45" fill="none" stroke="#d1d5db" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="280" stroke-linecap="round" transform="rotate(-90 55 55)"/>
-                            <text x="55" y="60" text-anchor="middle" font-size="18" font-weight="bold" fill="#374151">1%</text>
-                        </svg>
-                        <div class="ring-label"><span>🖥️</span> 系统CPU</div>
-                    </div>
+                <!-- CPU -->
+                <div class="ring-sm">
+                    <svg width="100" height="100" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="#f0f0f0" stroke-width="8"/>
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="#d1d5db" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="261" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                        <text x="50" y="55" text-anchor="middle" font-size="16" font-weight="bold" fill="#374151">1%</text>
+                    </svg>
+                    <div class="name"><span>🖥</span> 系统CPU</div>
+                </div>
 
-                    <!-- 网络I/O -->
-                    <div class="io-block">
-                        <h5>网络I/O</h5>
-                        <div class="io-line">读:<span>NaN</span>/s</div>
-                        <div class="io-line">写:<span>NaN</span>/s</div>
-                    </div>
+                <!-- 网络I/O -->
+                <div class="io-info">
+                    <h5>网络I/O</h5>
+                    <div class="io-line">读: <span>NaN</span>/s</div>
+                    <div class="io-line">写: <span>NaN</span>/s</div>
+                </div>
 
-                    <!-- 系统负载 -->
-                    <div class="io-block">
-                        <h5>系统负载</h5>
-                        <div class="io-line">—</div>
-                        <div class="io-line">—</div>
-                        <div class="io-line">—</div>
-                    </div>
+                <!-- 系统负载 -->
+                <div class="io-info">
+                    <h5>系统负载</h5>
+                    <div class="io-line">—</div>
+                    <div class="io-line">—</div>
+                    <div class="io-line">—</div>
+                </div>
 
-                    <!-- 速度折线图 -->
-                    <div class="chart-area">
-                        <div class="unit">单位: 速度MB/s</div>
-                        <svg class="chart-svg" viewBox="0 0 400 130" preserveAspectRatio="none">
-                            <defs>
-                                <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.2"/>
-                                    <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
-                                </linearGradient>
-                            </defs>
-                            <!-- 网格 -->
-                            <line x1="0" y1="26" x2="400" y2="26" stroke="#f3f4f6"/>
-                            <line x1="0" y1="52" x2="400" y2="52" stroke="#f3f4f6"/>
-                            <line x1="0" y1="78" x2="400" y2="78" stroke="#f3f4f6"/>
-                            <line x1="0" y1="104" x2="400" y2="104" stroke="#f3f4f6"/>
-                            <!-- 面积 -->
-                            <polygon points="0,130 60,128 120,129 180,127 240,128 300,130 360,129 400,130 400,130 0,130" fill="url(#lineGrad)"/>
-                            <!-- 线 -->
-                            <polyline points="0,130 60,128 120,129 180,127 240,128 300,130 360,129 400,130" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
-                            <!-- Y轴标签 -->
-                            <text x="4" y="125" font-size="9" fill="#9ca3af">0</text>
-                            <text x="4" y="95" font-size="9" fill="#9ca3af">0.2</text>
-                            <text x="4" y="65" font-size="9" fill="#9ca3af">0.6</text>
-                            <text x="4" y="15" font-size="9" fill="#9ca3af">1</text>
-                            <!-- X轴 -->
-                            <text x="380" y="125" font-size="9" fill="#9ca3af" text-anchor="end">10:58:54</text>
-                        </svg>
-                    </div>
+                <!-- 速度图 -->
+                <div class="chart-box">
+                    <div class="unit">单位: 速度MB/s</div>
+                    <svg width="100%" height="120" viewBox="0 0 400 120" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#3b82f6" stop-opacity=".15"/>
+                                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+                        <g stroke="#f5f5f5">
+                            <line x1="0" y1="24" x2="400" y2="24"/>
+                            <line x1="0" y1="48" x2="400" y2="48"/>
+                            <line x1="0" y1="72" x2="400" y2="72"/>
+                            <line x1="0" y1="96" x2="400" y2="96"/>
+                        </g>
+                        <polygon points="0,120 50,118 100,119 150,117 200,118 250,120 300,119 350,120 400,120 400,120 0,120" fill="url(#area)"/>
+                        <polyline points="0,120 50,118 100,119 150,117 200,118 250,120 300,119 350,120 400,120" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+                        <text x="4" y="115" font-size="9" fill="#bbb">0</text>
+                        <text x="4" y="90" font-size="9" fill="#bbb">0.2</text>
+                        <text x="4" y="65" font-size="9" fill="#bbb">0.6</text>
+                        <text x="4" y="20" font-size="9" fill="#bbb">1</text>
+                        <text x="390" y="115" font-size="9" fill="#bbb" text-anchor="end">10:58:54</text>
+                    </svg>
                 </div>
             </div>
         </div>
@@ -389,10 +400,9 @@
             const n=new Date();
             const s=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')+' '+
                   String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
-            document.getElementById('sysTime').textContent=s;
+            // 如需显示时间可添加元素
         }
         setInterval(updateTime,1000);
-        updateTime();
     </script>
 </body>
 </html>

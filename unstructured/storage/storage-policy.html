@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>存储策略 - 灾备管理平台</title>
+        <link rel="stylesheet" href="../../common.css">
+        <link rel="stylesheet" href="../../monitor/css/monitor.css">
+        <link rel="stylesheet" href="css/storage.css">
+    <script src="../../common.js"></script>
+    <script src="storage.js"></script>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <nav class="top-nav">
+        <div class="header-left">
+            <div class="logo">灾备管理平台</div>
+            <div class="top-menu">
+                <a href="../monitor/monitor-client.html">首页</a>
+                <a href="../../system.html">系统管理</a>
+                <a href="../../monitor/index.html">监控中心</a>
+                <a href="../../unstructured/client-detail.html" class="active">非结构化备份</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <span>系统管理员</span>
+            <a href="#">退出</a>
+        </div>
+    </header>
+
+    <!-- 左侧边栏 -->
+    <aside class="sidebar">
+            <nav>
+                <div class="menu-group">
+                    <ul class="menu-list">
+                        <li><a href="../client.html">客户端管理</a></li>
+                        <li class="has-submenu">
+                            <a href="javascript:void(0);" class="submenu-toggle" onclick="toggleSubmenu(this)">
+                                <span class="menu-icon">☰</span>
+                                <span>存储管理</span>
+                                <span class="arrow">▼</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="storage-policy.html" class="active">存储策略</a></li>
+                                <li><a href="storage-migrate-policy.html">复制迁移策略</a></li>
+                                <li><a href="storage-migrate-task.html">复制迁移任务</a></li>
+                                <li><a href="storage-offline.html">离线介质管理</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="../takeover.html" >接管管理</a></li>
+                        <li><a href="../export.html">数据导出</a></li>
+                        <li><a href="../search.html" >全文检索</a></li>
+                        <li><a href="../tags.html" >标签策略</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <!-- 面包屑 -->
+        <div class="breadcrumb-bar">
+            <ol class="breadcrumb">
+                <li><a href="#">首页</a></li>
+                <li><a href="#">非结构化备份</a></li>
+                <li class="active">存储策略</li>
+            </ol>
+            <span class="sys-time">系统时间：2026-05-19 17:25:41</span>
+        </div>
+
+        <!-- 操作栏 -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="btn btn-primary btn-icon" onclick="openModal()">
+                    <span>+</span> 新增策略
+                </button>
+            </div>
+        </div>
+
+        <!-- 数据表格 -->
+        <div class="card data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>策略名称</th>
+                        <th>存储A</th>
+                        <th>存储B</th>
+                        <th>默认配置</th>
+                        <th>被使用量</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>backup</td>
+                        <td>backup存储</td>
+                        <td>backup存储1</td>
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                        <td>1</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-text">详情</button>
+                                <span class="divider">|</span>
+                                <button class="btn-text">编辑</button>
+                                <span class="divider">|</span>
+                                <button class="btn-text" style="color: #ff4d4f;">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- 新增策略弹窗 -->
+    <div class="modal-overlay" id="policyModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>新增策略</h3>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-label"><span class="required">策略名称</span>：</div>
+                    <div class="form-input">
+                        <input type="text" placeholder="请输入策略名称">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label"><span class="required">存储A</span>：</div>
+                    <div class="form-input">
+                        <select>
+                            <option value="">请选择存储A</option>
+                            <option>backup存储</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">存储B：</div>
+                    <div class="form-input">
+                        <select>
+                            <option value="">请选择存储B</option>
+                            <option>backup存储1</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('policyModal').classList.add('show');
+        }
+        function closeModal() {
+            document.getElementById('policyModal').classList.remove('show');
+        }
+        // 点击遮罩关闭
+        document.getElementById('policyModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+</html>

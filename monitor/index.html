@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>监控中心 - 客户端监控</title>
+    <link rel="stylesheet" href="css/monitor.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="../index.html" class="logo">灾备管理平台</a>
+            <nav class="top-nav">
+                <a href="../index.html">首页</a>
+                <a href="../system.html">系统管理</a>
+                <a href="index.html" class="active">监控中心</a>
+                <a href="../unstructured/client.html">非结构化备份</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <span>管理员</span>
+            <a href="#">退出</a>
+        </div>
+    </header>
+
+    <aside class="sidebar">
+        <nav class="side-nav">
+            <a href="index.html" class="active">
+                <span class="icon-monitor"></span>
+                <span>客户端监控</span>
+            </a>
+            <a href="task.html">
+                <span class="icon-task"></span>
+                <span>任务</span>
+            </a>
+            <a href="log.html">
+                <span class="icon-log"></span>
+                <span>日志</span>
+            </a>
+            <a href="report.html">
+                <span class="icon-report"></span>
+                <span>报表</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="breadcrumb-bar">
+            <ol class="breadcrumb">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="index.html">监控中心</a></li>
+                <li class="active">客户端监控</li>
+            </ol>
+            <div class="sys-time">系统时间：2026-05-19 11:28:21</div>
+        </div>
+
+        <div class="card">
+            <div class="page-header">
+                <h2>客户端监控</h2>
+                <div class="header-actions">
+                    <button class="btn btn-primary">告警阈值</button>
+                    <button class="btn btn-filter active">全部</button>
+                    <button class="btn btn-success">在线</button>
+                    <button class="btn btn-danger">已下线</button>
+                    <input type="text" class="input-search" placeholder="输入IP搜索">
+                    <button class="btn btn-primary">搜索</button>
+                    <button class="btn">重置</button>
+                </div>
+            </div>
+
+            <div class="data-table-wrapper" style="margin-top: 20px;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox"></th>
+                            <th>系统</th>
+                            <th>状态</th>
+                            <th>IP</th>
+                            <th>内存% <span class="sort-icon">⇅</span></th>
+                            <th>CPU% <span class="sort-icon">⇅</span></th>
+                            <th>磁盘% <span class="sort-icon">⇅</span></th>
+                            <th>CPU核数</th>
+                            <th>内存</th>
+                            <th>下行速率</th>
+                            <th>上行速率</th>
+                            <th>系统负载</th>
+                            <th>更新时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="warning-row">
+                            <td><input type="checkbox"></td>
+                            <td><span class="os-icon linux"></span></td>
+                            <td><span class="status-badge online">在线</span></td>
+                            <td>192.168.1.176</td>
+                            <td><span class="metric danger">90.9% ↑</span></td>
+                            <td><span class="metric danger">6.4% ↑</span></td>
+                            <td><span class="metric danger">34.3% ↑</span></td>
+                            <td>8</td>
+                            <td>15.52 GB</td>
+                            <td>684.50 bytes/s</td>
+                            <td>674.50 bytes/s</td>
+                            <td>0.96, 0.77, 0.78</td>
+                            <td>2026-05-18 16:47:00</td>
+                            <td><a href="#" class="link-detail">详情</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-bar">
+                <span class="total">共1条数据</span>
+                <div class="pagination">
+                    <button class="btn-page" disabled>&lt;</button>
+                    <button class="btn-page active">1</button>
+                    <button class="btn-page" disabled>&gt;</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

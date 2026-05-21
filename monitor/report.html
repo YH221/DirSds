@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>监控中心 - 报表</title>
+    <link rel="stylesheet" href="css/monitor.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="../index.html" class="logo">灾备管理平台</a>
+            <nav class="top-nav">
+                <a href="../index.html">首页</a>
+                <a href="../system.html">系统管理</a>
+                <a href="index.html" class="active">监控中心</a>
+                <a href="../unstructured/client.html">非结构化备份</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <span>管理员</span>
+            <a href="#">退出</a>
+        </div>
+    </header>
+
+    <aside class="sidebar">
+        <nav class="side-nav">
+            <a href="index.html">
+                <span class="icon-monitor"></span>
+                <span>客户端监控</span>
+            </a>
+            <a href="task.html">
+                <span class="icon-task"></span>
+                <span>任务</span>
+            </a>
+            <a href="log.html">
+                <span class="icon-log"></span>
+                <span>日志</span>
+            </a>
+            <a href="report.html" class="active">
+                <span class="icon-report"></span>
+                <span>报表</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="breadcrumb-bar">
+            <ol class="breadcrumb">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="index.html">监控中心</a></li>
+                <li class="active">报表</li>
+            </ol>
+            <div class="sys-time">系统时间：2026-05-19 11:29:55</div>
+        </div>
+
+        <div class="search-bar report-search">
+            <div class="form-group">
+                <label>节点：</label>
+                <select>
+                    <option>192.168.1.176</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>客户端：</label>
+                <select>
+                    <option>请选择客户端</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>时间：</label>
+                <input type="text" placeholder="开始日期" class="input-date">
+                <span class="date-sep">~</span>
+                <input type="text" placeholder="结束日期" class="input-date">
+            </div>
+            <button class="btn btn-primary">搜索</button>
+            <button class="btn">重置</button>
+        </div>
+
+        <div class="tabs report-tabs">
+            <a href="#" class="active" data-tab="unstructured">非结构化备份</a>
+            <a href="#" data-tab="replication">复制迁移</a>
+        </div>
+
+        <div class="tab-content active" id="unstructured">
+            <div class="panel">
+                <h3 class="panel-title">客户端保护数据量</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>客户端</th>
+                            <th>IP</th>
+                            <th>类型</th>
+                            <th>路径</th>
+                            <th>文件数</th>
+                            <th>保护数据量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>linux176</td>
+                            <td>192.168.1.176</td>
+                            <td>本地文件系统</td>
+                            <td>/ces1</td>
+                            <td>28</td>
+                            <td>1.60 GB</td>
+                        </tr>
+                        <tr>
+                            <td>linux176</td>
+                            <td>192.168.1.176</td>
+                            <td>本地文件系统</td>
+                            <td>/数据</td>
+                            <td>22</td>
+                            <td>521.53 MB</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4"></td>
+                            <td>总文件数：50</td>
+                            <td>总保护数据量：2.11 GB</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="charts-row">
+                <div class="chart-box">
+                    <h4>配置数</h4>
+                    <div id="configChart" style="height: 200px;"></div>
+                </div>
+
+                <div class="chart-box">
+                    <h4>备份文件信息</h4>
+                    <div class="toggle-btns">
+                        <button class="btn-toggle active" data-type="data">数据统计</button>
+                        <button class="btn-toggle" data-type="storage">存储统计</button>
+                    </div>
+                    <div id="filePieChart" style="height: 180px;"></div>
+                </div>
+
+                <div class="chart-box">
+                    <table class="simple-table" id="fileTypeTable">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th id="statHeader">数据统计</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>全部文件</td><td>50</td></tr>
+                            <tr><td>文本</td><td>39</td></tr>
+                            <tr><td>视频</td><td>5</td></tr>
+                            <tr><td>音频</td><td>0</td></tr>
+                            <tr><td>图片</td><td>6</td></tr>
+                            <tr><td>压缩文件</td><td>0</td></tr>
+                            <tr><td>其它</td><td>0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="chart-box wide">
+                    <div class="chart-header">
+                        <h4>备份归档数据量 <span class="icon-help">?</span></h4>
+                        <select class="select-sm">
+                            <option>最近一月</option>
+                        </select>
+                        <select class="select-sm">
+                            <option>MB</option>
+                        </select>
+                    </div>
+                    <div id="trendChart" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="replication">
+            <div class="panel">
+                <h3 class="panel-title">客户端保护数据量</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>源端</th>
+                            <th>源端路径</th>
+                            <th>源端IP</th>
+                            <th>源端类型</th>
+                            <th>目标端</th>
+                            <th>目标端路径</th>
+                            <th>目标端IP</th>
+                            <th>文件数</th>
+                            <th>保护数据量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="9">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📂</div>
+                                    <p>暂无数据</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="charts-row">
+                <div class="chart-box">
+                    <h4>完成任务数</h4>
+                    <div id="taskChart2" style="height: 200px;"></div>
+                </div>
+                <div class="chart-box">
+                    <h4>复制文件信息</h4>
+                    <div id="filePieChart2" style="height: 200px;"></div>
+                </div>
+                <div class="chart-box">
+                    <table class="simple-table">
+                        <tbody>
+                            <tr><td>全部文件</td><td>0</td></tr>
+                            <tr><td>文本</td><td>0</td></tr>
+                            <tr><td>视频</td><td>0</td></tr>
+                            <tr><td>音频</td><td>0</td></tr>
+                            <tr><td>图片</td><td>0</td></tr>
+                            <tr><td>压缩文件</td><td>0</td></tr>
+                            <tr><td>其它</td><td>0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="chart-box wide">
+                    <div class="chart-header">
+                        <h4>复制迁移数据量 <span class="icon-help">?</span></h4>
+                        <select class="select-sm">
+                            <option>最近一月</option>
+                        </select>
+                        <select class="select-sm">
+                            <option>MB</option>
+                        </select>
+                    </div>
+                    <div id="trendChart2" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.querySelectorAll('.report-tabs a').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.report-tabs a').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const tabId = this.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.btn-toggle').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const isData = this.dataset.type === 'data';
+                document.getElementById('statHeader').textContent = isData ? '数据统计' : '存储统计';
+                
+                const tbody = document.querySelector('#fileTypeTable tbody');
+                if (isData) {
+                    tbody.innerHTML = `
+                        <tr><td>全部文件</td><td>50</td></tr>
+                        <tr><td>文本</td><td>39</td></tr>
+                        <tr><td>视频</td><td>5</td></tr>
+                        <tr><td>音频</td><td>0</td></tr>
+                        <tr><td>图片</td><td>6</td></tr>
+                        <tr><td>压缩文件</td><td>0</td></tr>
+                        <tr><td>其它</td><td>0</td></tr>
+                    `;
+                    updatePieChart([78, 10, 0, 12, 0, 0], ['文本', '视频', '音频', '图片', '压缩文件', '其它']);
+                } else {
+                    tbody.innerHTML = `
+                        <tr><td>全部文件</td><td>2.11 GB</td></tr>
+                        <tr><td>文本</td><td>3.02 MB</td></tr>
+                        <tr><td>视频</td><td>2.10 GB</td></tr>
+                        <tr><td>音频</td><td>0Bytes</td></tr>
+                        <tr><td>图片</td><td>1.69 MB</td></tr>
+                        <tr><td>压缩文件</td><td>0Bytes</td></tr>
+                        <tr><td>其它</td><td>0Bytes</td></tr>
+                    `;
+                    updatePieChart([0.1, 99.8, 0, 0.1, 0, 0], ['文本', '视频', '音频', '图片', '压缩文件', '其它']);
+                }
+            });
+        });
+
+        const configChart = echarts.init(document.getElementById('configChart'));
+        configChart.setOption({
+            xAxis: {
+                type: 'category',
+                data: ['已激活配置', '未激活配置', '数据接管', '副本接管'],
+                axisLabel: { fontSize: 11 }
+            },
+            yAxis: { type: 'value', name: '个' },
+            series: [{
+                data: [2, 0, 1, 0],
+                type: 'bar',
+                itemStyle: { color: '#5470c6' }
+            }]
+        });
+
+        let filePieChart = echarts.init(document.getElementById('filePieChart'));
+        function updatePieChart(data, names) {
+            filePieChart.setOption({
+                series: [{
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    data: names.map((name, i) => ({ value: data[i], name })),
+                    label: {
+                        formatter: '{b}: {d}%'
+                    }
+                }]
+            });
+        }
+        updatePieChart([78, 10, 0, 12, 0, 0], ['文本', '视频', '音频', '图片', '压缩文件', '其它']);
+
+        const trendChart = echarts.init(document.getElementById('trendChart'));
+        trendChart.setOption({
+            xAxis: {
+                type: 'category',
+                data: ['2026-04-19', '2026-04-25', '2026-05-01', '2026-05-07', '2026-05-13', '2026-05-19']
+            },
+            yAxis: { type: 'value', name: 'MB' },
+            series: [{
+                data: [0, 1800, 0, 3700, 0, 5600],
+                type: 'line',
+                smooth: true,
+                itemStyle: { color: '#5470c6' },
+                areaStyle: { opacity: 0.1 }
+            }]
+        });
+
+        const taskChart2 = echarts.init(document.getElementById('taskChart2'));
+        taskChart2.setOption({
+            xAxis: { type: 'category', data: ['周期', '实时'] },
+            yAxis: { type: 'value', name: '个' },
+            series: [{ data: [0, 0], type: 'bar', itemStyle: { color: '#5470c6' } }]
+        });
+
+        const filePieChart2 = echarts.init(document.getElementById('filePieChart2'));
+        filePieChart2.setOption({
+            series: [{
+                type: 'pie',
+                radius: ['40%', '70%'],
+                data: [{value: 0, name: '无数据'}],
+                label: { show: false }
+            }]
+        });
+
+        const trendChart2 = echarts.init(document.getElementById('trendChart2'));
+        trendChart2.setOption({
+            xAxis: {
+                type: 'category',
+                data: ['2026-04-19', '2026-04-25', '2026-05-01', '2026-05-07', '2026-05-13', '2026-05-19']
+            },
+            yAxis: { type: 'value', name: 'MB' },
+            series: [{ data: [0, 0, 0, 0, 0, 0], type: 'line', itemStyle: { color: '#5470c6' } }]
+        });
+
+        window.addEventListener('resize', () => {
+            configChart.resize();
+            filePieChart.resize();
+            trendChart.resize();
+            taskChart2.resize();
+            filePieChart2.resize();
+            trendChart2.resize();
+        });
+    </script>
+</body>
+</html>

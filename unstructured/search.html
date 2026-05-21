@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>全文检索 - 非结构化备份</title>
-    <link rel="stylesheet" href="../common.css">
+       <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="storage/css/storage.css">
+    <script src="../common.js"></script>
+    <script src="storage/js/storage.js"></script>
     <style>
         .search-hero { background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; padding: 24px; margin-bottom: 20px; }
         .big-search { display: flex; gap: 10px; }
@@ -29,9 +32,9 @@
     <header class="top-nav">
         <div class="logo">灾备管理平台</div>
         <nav class="top-menu">
-            <a href="../index.html">首页</a>
+            <a href="../index.html">概览</a>
             <a href="../system.html">系统管理</a>
-            <a href="../monitor.html">监控中心</a>
+            <a href="../monitor/index.html">监控中心</a>
             <a href="./client.html" class="active">非结构化备份</a>
         </nav>
         <div class="user-info">
@@ -41,17 +44,28 @@
     </header>
 
     <div class="main-container">
-        <aside class="sidebar">
+         <aside class="sidebar">
             <nav>
                 <div class="menu-group">
-                    <div class="menu-title active">非结构化备份</div>
                     <ul class="menu-list">
                         <li><a href="./client.html">客户端管理</a></li>
-                        <li><a href="./takeover.html">接管管理</a></li>
+                        <li class="has-submenu">
+                            <a href="javascript:void(0);" class="submenu-toggle" onclick="toggleSubmenu(this)">
+                                <span class="menu-icon">☰</span>
+                                <span>存储管理</span>
+                                <span class="arrow">▼</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="./storage/storage-policy.html">存储策略</a></li>
+                                <li><a href="./storage/storage-migrate-policy.html">复制迁移策略</a></li>
+                                <li><a href="./storage/storage-migrate-task.html">复制迁移任务</a></li>
+                                <li><a href="./storage/storage-offline.html">离线介质管理</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="./takeover.html" >接管管理</a></li>
                         <li><a href="./export.html">数据导出</a></li>
-                        <li><a href="./storage.html">存储管理</a></li>
-                        <li><a href="./search.html" class="active">全文检索</a></li>
-                        <li><a href="./tags.html">标签策略</a></li>
+                        <li><a href="./search.html"  class="active">全文检索</a></li>
+                        <li><a href="./tags.html" >标签策略</a></li>
                     </ul>
                 </div>
             </nav>

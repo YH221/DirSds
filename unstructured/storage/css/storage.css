@@ -1,0 +1,432 @@
+/* ===== 存储管理模块样式 ===== */
+/* 基于项目统一风格：白色侧边栏 + 右边框高亮 */
+
+/* ===== 存储策略 - 开关 ===== */
+/* ===== 手风琴折叠菜单 ===== */
+
+/* 有子菜单的项 */
+.has-submenu > a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+/* 菜单图标 */
+.menu-icon {
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* 箭头图标 */
+.arrow {
+    margin-left: auto;
+    font-size: 12px;
+    transition: transform 0.3s;
+    color: #999;
+}
+
+/* 展开状态：箭头旋转 */
+.has-submenu.open > a .arrow {
+    transform: rotate(180deg);
+}
+
+/* 子菜单容器 */
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: #f8f9fa;
+}
+
+/* 展开状态 */
+.has-submenu.open .submenu {
+    max-height: 200px; /* 足够容纳4个子项 */
+}
+
+/* 子菜单项 */
+.submenu li a {
+    padding-left: 54px; /* 缩进对齐 */
+    font-size: 13px;
+    color: #666;
+    border-left: 3px solid transparent;
+}
+
+.submenu li a:hover {
+    background: #f0f2f5;
+    color: #1890ff;
+}
+
+/* 子菜单当前选中 */
+.submenu li a.active {
+    color: #1890ff;
+    background: #e6f7ff;
+    border-left-color: #1890ff;
+}
+
+/* 父菜单高亮（当子项选中时） */
+.has-submenu:has(.active) > a,
+.has-submenu.open > a {
+    color: #1890ff;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 22px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #d9d9d9;
+    border-radius: 22px;
+    transition: .3s;
+}
+
+.slider::before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: .3s;
+}
+
+input:checked + .slider {
+    background: #1890ff;
+}
+
+input:checked + .slider::before {
+    transform: translateX(22px);
+}
+
+/* ===== 操作按钮组 ===== */
+.action-btns {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.action-btns .btn-text {
+    padding: 0;
+    border: none;
+    background: none;
+    color: #1890ff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.action-btns .btn-text:hover {
+    color: #40a9ff;
+}
+
+.action-btns .divider {
+    color: #d9d9d9;
+    margin: 0 4px;
+}
+
+/* 下拉操作菜单 */
+.dropdown-menu {
+    position: absolute;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    min-width: 120px;
+    z-index: 100;
+    display: none;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 8px 16px;
+    color: #333;
+    font-size: 14px;
+}
+
+.dropdown-menu a:hover {
+    background: #f5f7fa;
+    color: #1890ff;
+}
+
+/* ===== 弹窗模态框 ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all .3s;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 8px;
+    width: 520px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: hidden;
+    transform: scale(.9);
+    transition: transform .3s;
+}
+
+.modal-overlay.show .modal-box {
+    transform: scale(1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f1f1f;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #999;
+    font-size: 18px;
+    border: none;
+    background: none;
+}
+
+.modal-close:hover {
+    background: #f5f5f5;
+    color: #666;
+}
+
+.modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    max-height: calc(90vh - 140px);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* ===== 表单布局 ===== */
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-row:last-child {
+    margin-bottom: 0;
+}
+
+.form-label {
+    width: 120px;
+    text-align: right;
+    padding-right: 16px;
+    color: #333;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.form-label .required::before {
+    content: '*';
+    color: #ff4d4f;
+    margin-right: 4px;
+}
+
+.form-input {
+    flex: 1;
+}
+
+.form-input input[type="text"],
+.form-input input[type="number"],
+.form-input select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: all .3s;
+}
+
+.form-input input:focus,
+.form-input select:focus {
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24,144,255,.15);
+}
+
+.form-input .radio-group,
+.form-input .checkbox-group {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding-top: 6px;
+}
+
+.form-input label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+/* 输入框带单位 */
+.input-with-unit {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.input-with-unit input {
+    width: 120px !important;
+}
+
+/* ===== 标签页（离线介质） ===== */
+.sub-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.sub-tabs a {
+    padding: 10px 20px;
+    color: #666;
+    font-size: 14px;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all .3s;
+}
+
+.sub-tabs a:hover {
+    color: #1890ff;
+}
+
+.sub-tabs a.active {
+    color: #1890ff;
+    border-bottom-color: #1890ff;
+    font-weight: 500;
+}
+
+/* ===== 顶部操作栏（带新建按钮） ===== */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.toolbar-left {
+    display: flex;
+    gap: 12px;
+}
+
+.toolbar-right {
+    display: flex;
+    gap: 12px;
+}
+
+/* 按钮图标 */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ===== 表格内开关 ===== */
+.table-switch {
+    pointer-events: none;
+}
+
+/* ===== 空状态 ===== */
+.empty-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.empty-box .icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: .3;
+}
+
+/* ===== 消息提示 ===== */
+.toast {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    z-index: 3000;
+    opacity: 0;
+    transition: all .3s;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast-error {
+    background: #fff2f0;
+    color: #cf1322;
+    border: 1px solid #ffccc7;
+}
+
+.toast-success {
+    background: #f6ffed;
+    color: #52c41a;
+    border: 1px solid #d9f7be;
+}

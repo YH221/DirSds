@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>监控中心 - 任务</title>
+    <link rel="stylesheet" href="css/monitor.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="../index.html" class="logo">灾备管理平台</a>
+            <nav class="top-nav">
+                <a href="../index.html">首页</a>
+                <a href="../system.html">系统管理</a>
+                <a href="index.html" class="active">监控中心</a>
+                <a href="../unstructured/client.html">非结构化备份</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <span>管理员</span>
+            <a href="#">退出</a>
+        </div>
+    </header>
+
+    <aside class="sidebar">
+        <nav class="side-nav">
+            <a href="index.html">
+                <span class="icon-monitor"></span>
+                <span>客户端监控</span>
+            </a>
+            <a href="task.html" class="active">
+                <span class="icon-task"></span>
+                <span>任务</span>
+            </a>
+            <a href="log.html">
+                <span class="icon-log"></span>
+                <span>日志</span>
+            </a>
+            <a href="report.html">
+                <span class="icon-report"></span>
+                <span>报表</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="breadcrumb-bar">
+            <ol class="breadcrumb">
+                <li><a href="../index.html">首页</a></li>
+                <li><a href="index.html">监控中心</a></li>
+                <li class="active">任务</li>
+            </ol>
+            <div class="sys-time">系统时间：2026-05-19 11:28:31</div>
+        </div>
+
+        <div class="search-bar">
+            <div class="form-group">
+                <label>任务名称：</label>
+                <input type="text" placeholder="请输入任务名称">
+            </div>
+            <div class="form-group">
+                <label>开始时间：</label>
+                <input type="text" placeholder="请选择备份时间" class="input-date">
+            </div>
+            <button class="btn btn-primary">搜索</button>
+        </div>
+
+        <div class="tabs">
+            <a href="#" class="active">当前任务</a>
+            <a href="#">历史任务</a>
+        </div>
+
+        <div class="card" style="padding: 0;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>任务名称</th>
+                        <th>任务类型</th>
+                        <th>状态</th>
+                        <th>进度</th>
+                        <th>开始时间</th>
+                        <th>结束时间</th>
+                        <th>错误信息</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-icon">📂</div>
+                                <p>暂无数据</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card" style="margin-top: -10px; border-radius: 0 0 8px 8px;">
+            <div class="pagination-bar" style="padding: 16px 24px;">
+                <span class="total">共0条数据</span>
+                <div class="pagination">
+                    <button class="btn-page" disabled>&lt;</button>
+                    <button class="btn-page active">0</button>
+                    <button class="btn-page" disabled>&gt;</button>
+                </div>
+                <div class="page-size">
+                    <select>
+                        <option>10 条/页</option>
+                        <option>20 条/页</option>
+                        <option>50 条/页</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
