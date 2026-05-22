@@ -68,11 +68,11 @@
             <nav>
                 <div class="menu-group">
                     <ul class="menu-list">
-                        <li><a href="config.html">平台配置</a></li>
-                        <li><a href="client.html">客户端管理</a></li>
-                        <li><a href="users.html">用户管理</a></li>
-                        <li><a href="roles.html">角色权限</a></li>
-                        <li><a href="logs.html">操作日志</a></li>
+                        <li><a href="system/config.html">平台配置</a></li>
+                        <li><a href="system/client.html">客户端管理</a></li>
+                        <li><a href="system/users.html">用户管理</a></li>
+                        <li><a href="system/roles.html">角色权限</a></li>
+                        <li><a href="system/logs.html">操作日志</a></li>
                     </ul>
                 </div>
             </nav>
