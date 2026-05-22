@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>平台配置 - 系统管理</title>
+    <link rel="stylesheet" href="../common.css">
+</head>
+<!-- 通过 data-module="system" 自动匹配 common.js 中的系统管理侧边栏 -->
+<body data-module="system">
+    
+    <!-- 业务内容统一包裹在此，common.js 会自动将其移入右侧 .content 区域 -->
+    <div id="page-content">
+        <nav class="breadcrumb">
+            <a href="../index.html">首页</a>
+            <span class="sep">/</span>
+            <span>系统管理</span>
+            <span class="sep">/</span>
+            <span class="current">平台配置</span>
+        </nav>
+        <h1 class="page-title">平台配置</h1>
+
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="openModal('modal-edit-config')">编辑配置</button>
+            <div class="filter-bar">
+                <select>
+                    <option>全部配置项</option>
+                    <option>基础设置</option>
+                    <option>网络设置</option>
+                    <option>安全设置</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>配置项名称</th>
+                        <th>当前值</th>
+                        <th>说明</th>
+                        <th>更新时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>系统名称</strong></td>
+                        <td>DirSds 灾备管理平台</td>
+                        <td>平台显示名称</td>
+                        <td>2024-01-10 10:00</td>
+                        <td><button class="btn-text">修改</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>备份数据保留天数</strong></td>
+                        <td>90 天</td>
+                        <td>超过此天数的数据将自动清理</td>
+                        <td>2024-01-12 14:30</td>
+                        <td><button class="btn-text">修改</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>最大并发导出任务数</strong></td>
+                        <td>5</td>
+                        <td>同时运行的导出任务上限</td>
+                        <td>2024-01-15 09:15</td>
+                        <td><button class="btn-text">修改</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 模态框（结构与你 export.html 完全一致） -->
+    <div id="modal-edit-config" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>编辑配置</h3>
+                <button class="close-btn" onclick="closeModal('modal-edit-config')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="form-grid">
+                    <div class="form-group full-width">
+                        <label>配置项 <span class="required">*</span></label>
+                        <select>
+                            <option>系统名称</option>
+                            <option>备份数据保留天数</option>
+                            <option>最大并发导出任务数</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>新值 <span class="required">*</span></label>
+                        <input type="text" placeholder="请输入新的配置值">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-edit-config')">取消</button>
+                <button class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 仅引入 common.js，布局与交互自动生效 -->
+    <script src="../common.js"></script>
+</body>
+</html>

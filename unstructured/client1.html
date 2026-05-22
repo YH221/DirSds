@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户端管理 - 非结构化备份</title>
+         <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="storage/css/storage.css">
+    <script src="../common.js"></script>
+    <script src="storage/js/storage.js"></script>
+</head>
+<body>
+    <header class="top-nav">
+        <div class="logo">灾备管理平台</div>
+        <nav class="top-menu">
+            <a href="../index.html">概览</a>
+            <a href="../system/config.html">系统管理</a>
+            <a href="../monitor/index.html">监控中心</a>
+            <a href="./client.html" class="active">非结构化备份</a>
+        </nav>
+        <div class="user-info">
+            <span>管理员</span>
+            <a href="../login.html" class="logout">退出</a>
+        </div>
+    </header>
+
+    <div class="main-container">
+     <aside class="sidebar">
+            <nav>
+                <div class="menu-group">
+                    <ul class="menu-list">
+                        <li><a href="./client.html" class="active">客户端管理</a></li>
+                        <li class="has-submenu">
+                            <a href="javascript:void(0);" class="submenu-toggle" onclick="toggleSubmenu(this)">
+                                <span class="menu-icon">☰</span>
+                                <span>存储管理</span>
+                                <span class="arrow">▼</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="./storage/storage-policy.html">存储策略</a></li>
+                                <li><a href="./storage/storage-migrate-policy.html">复制迁移策略</a></li>
+                                <li><a href="./storage/storage-migrate-task.html">复制迁移任务</a></li>
+                                <li><a href="./storage/storage-offline.html">离线介质管理</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="./takeover.html" >接管管理</a></li>
+                        <li><a href="./export.html">数据导出</a></li>
+                        <li><a href="./search.html"  >全文检索</a></li>
+                        <li><a href="./tags.html" >标签策略</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <nav class="breadcrumb">
+                <a href="../index.html">首页</a>
+                <span class="sep">/</span>
+                <span>非结构化备份</span>
+                <span class="sep">/</span>
+                <span class="current">客户端管理</span>
+            </nav>
+            <h1 class="page-title">客户端管理</h1>
+
+            <div class="toolbar">
+                <button class="btn btn-primary" onclick="openModal('modal-add-client')">添加客户端</button>
+                <div class="search-box">
+                    <input type="text" id="searchClient" placeholder="搜索客户端名称 / IP...">
+                    <button class="btn" onclick="filterTable('searchClient', 'clientTable')">搜索</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <table class="data-table" id="clientTable">
+                    <thead>
+                        <tr>
+                            <th width="40"><input type="checkbox" class="check-all"></th>
+                            <th>客户端名称</th>
+                            <th>IP 地址</th>
+                            <th>操作系统</th>
+                            <th>状态</th>
+                            <th>最近备份时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" class="check-item"></td>
+                            <td><strong>Client-Win-01</strong></td>
+                            <td>192.168.1.101</td>
+                            <td>Windows Server 2019</td>
+                            <td><span class="status-badge success">在线</span></td>
+                            <td>2024-01-15 02:00</td>
+                            <td>
+                                <a href="./client-detail.html?id=Client-Win-01" class="btn-text">查看</a>
+                                <button class="btn-text" onclick="openModal('modal-edit-client')">编辑</button>
+                                <button class="btn-text danger" onclick="openModal('modal-del-client')">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="check-item"></td>
+                            <td><strong>Client-Linux-05</strong></td>
+                            <td>192.168.1.105</td>
+                            <td>CentOS 7.9</td>
+                            <td><span class="status-badge success">在线</span></td>
+                            <td>2024-01-15 01:30</td>
+                            <td>
+                                <a href="./client-detail.html?id=Client-Linux-05" class="btn-text">查看</a>
+                                <button class="btn-text" onclick="openModal('modal-edit-client')">编辑</button>
+                                <button class="btn-text danger" onclick="openModal('modal-del-client')">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="check-item"></td>
+                            <td><strong>Client-Win-02</strong></td>
+                            <td>192.168.1.102</td>
+                            <td>Windows 10</td>
+                            <td><span class="status-badge warning">离线</span></td>
+                            <td>2024-01-10 22:15</td>
+                            <td>
+                                <a href="./client-detail.html?id=Client-Win-02" class="btn-text">查看</a>
+                                <button class="btn-text" onclick="openModal('modal-edit-client')">编辑</button>
+                                <button class="btn-text danger" onclick="openModal('modal-del-client')">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- 添加客户端 -->
+    <div id="modal-add-client" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>添加客户端</h3>
+                <button class="close-btn" onclick="closeModal('modal-add-client')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="form-grid">
+                    <div class="form-group">
+                        <label>IP 地址 <span class="required">*</span></label>
+                        <input type="text" placeholder="例如：192.168.1.101">
+                    </div>
+                    <div class="form-group">
+                        <label>主机名 <span class="required">*</span></label>
+                        <input type="text" placeholder="例如：Client-Win-01">
+                    </div>
+                    <div class="form-group">
+                        <label>配置端口 <span class="required">*</span></label>
+                        <input type="number" value="9095">
+                    </div>
+                    <div class="form-group">
+                        <label>服务 IP <span class="required">*</span></label>
+                        <input type="text" placeholder="服务端通讯 IP">
+                    </div>
+                    <div class="form-group">
+                        <label>大文件线程数</label>
+                        <input type="number" value="2" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>小文件线程数</label>
+                        <input type="number" value="4" min="1">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>存储策略 <span class="required">*</span></label>
+                        <select>
+                            <option>Pool-Default（默认）</option>
+                            <option>Pool-NAS-01</option>
+                            <option>Pool-S3-Archive</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-add-client')">取消</button>
+                <button class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑客户端 -->
+    <div id="modal-edit-client" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>编辑客户端</h3>
+                <button class="close-btn" onclick="closeModal('modal-edit-client')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="form-grid">
+                    <div class="form-group">
+                        <label>IP 地址 <span class="required">*</span></label>
+                        <input type="text" value="192.168.1.101">
+                    </div>
+                    <div class="form-group">
+                        <label>配置端口 <span class="required">*</span></label>
+                        <input type="number" value="9095">
+                    </div>
+                    <div class="form-group">
+                        <label>备份服务 IP <span class="required">*</span></label>
+                        <input type="text" value="192.168.1.1">
+                    </div>
+                    <div class="form-group">
+                        <label>大文件线程数</label>
+                        <input type="number" value="2" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>小文件线程数</label>
+                        <input type="number" value="4" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>存储策略 <span class="required">*</span></label>
+                        <select>
+                            <option>Pool-Default（默认）</option>
+                            <option>Pool-NAS-01</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-edit-client')">取消</button>
+                <button class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除客户端 -->
+    <div id="modal-del-client" class="modal">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3>删除客户端</h3>
+                <button class="close-btn" onclick="closeModal('modal-del-client')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color:var(--gray-700); line-height:1.6;">确定删除该客户端吗？</p>
+                <label style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; color:var(--gray-600); cursor:pointer;">
+                    <input type="checkbox"> 同时删除该客户端已备份的数据
+                </label>
+                <p class="form-tip" style="margin-top:8px;">勾选则删除客户端及备份数据；不勾选仅删除客户端，备份数据保留。</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('modal-del-client')">取消</button>
+                <button class="btn btn-danger">确定删除</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common.js"></script>
+</body>
+</html>
