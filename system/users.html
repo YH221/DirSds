@@ -237,14 +237,73 @@
                     <div class="form-group full-width"><label>用户 Base DN <span class="required">*</span></label><input type="text" id="userBaseDN" placeholder="OU=员工,DC=corp,DC=com"></div>
                     <div class="form-group full-width"><label>组 Base DN</label><input type="text" id="groupBaseDN" placeholder="OU=安全组,DC=corp,DC=com"></div>
                     <div class="form-group full-width"><label>用户搜索过滤器</label><input type="text" id="userFilter" placeholder="(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))"></div>
-                    <div class="form-group"><label>绑定用户名 <span class="required">*</span></label><input type="text" id="bindUser" placeholder="具有只读查询权限的服务账号"></div>
-                    <div class="form-group"><label>绑定密码 <span class="required">*</span></label><input type="password" id="bindPass" placeholder="服务账号密码"></div>
+                    
+                    <div class="form-group full-width" style="margin-top: 10px;">
+                        <label>🏢 部门映射配置（批量绑定 AD 部门 → 平台部门）</label>
+                        <div style="margin-top: 8px; border: 1px solid #dcdfe6; border-radius: 4px; padding: 8px;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;" id="deptMappingTable">
+                                <thead>
+                                    <tr style="background: #f5f7fa;">
+                                        <th style="padding: 6px; text-align: left;">AD 部门标识</th>
+                                        <th style="padding: 6px; text-align: left;">绑定平台部门</th>
+                                        <th style="padding: 6px; text-align: center; width: 60px;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 6px;"><input type="text" class="form-input-sm" placeholder="如：研发部 或 OU=研发,DC=corp,DC=com" style="width: 100%;"></td>
+                                        <td style="padding: 6px;">
+                                            <select class="form-select-sm" style="width: 100%;">
+                                                <option value="">请选择平台部门</option>
+                                                <option value="IT部">IT部</option>
+                                                <option value="安全部">安全部</option>
+                                                <option value="审计部">审计部</option>
+                                                <option value="运维部">运维部</option>
+                                                <option value="未分配">未分配</option>
+                                            </select>
+                                        </td>
+                                        <td style="padding: 6px; text-align: center;">
+                                            <button type="button" class="btn-text danger" onclick="this.closest('tr').remove()">🗑</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn btn-sm" style="margin-top: 8px;" onclick="addDeptMappingRow()">+ 添加映射规则</button>
+                            <div class="form-tip" style="margin-top: 6px; font-size: 12px; color: #909399;">
+                                ℹ️ 同步时自动将 AD 用户匹配到对应平台部门。未匹配的用户将归入“未分配”部门。
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group"><label>同步频率</label><select id="syncFreq"><option>手动同步</option><option>每小时</option><option>每天</option></select></div>
                     <div class="form-group"><label>冲突处理策略</label><select id="conflictStrategy"><option>保留本地数据</option><option>以目录为准</option><option>标记异常</option></select></div>
                 `;
             }
             html += '</form>';
             container.innerHTML = html;
+        }
+
+        // 动态添加部门映射行
+        function addDeptMappingRow() {
+            const tbody = document.querySelector('#deptMappingTable tbody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="padding: 6px;"><input type="text" class="form-input-sm" placeholder="如：财务部 或 OU=财务,DC=corp,DC=com" style="width: 100%;"></td>
+                <td style="padding: 6px;">
+                    <select class="form-select-sm" style="width: 100%;">
+                        <option value="">请选择平台部门</option>
+                        <option value="IT部">IT部</option>
+                        <option value="安全部">安全部</option>
+                        <option value="审计部">审计部</option>
+                        <option value="运维部">运维部</option>
+                        <option value="未分配">未分配</option>
+                    </select>
+                </td>
+                <td style="padding: 6px; text-align: center;">
+                    <button type="button" class="btn-text danger" onclick="this.closest('tr').remove()">🗑</button>
+                </td>
+            `;
+            tbody.appendChild(row);
         }
 
         function testConnection() {
@@ -272,12 +331,22 @@
                 config.userBaseDN = document.getElementById('userBaseDN')?.value;
                 config.groupBaseDN = document.getElementById('groupBaseDN')?.value;
                 config.userFilter = document.getElementById('userFilter')?.value;
-                config.bindUser = document.getElementById('bindUser')?.value;
                 config.syncFreq = document.getElementById('syncFreq')?.value;
                 config.conflictStrategy = document.getElementById('conflictStrategy')?.value;
+
+                // 收集部门映射规则
+                const mappingRows = document.querySelectorAll('#deptMappingTable tbody tr');
+                config.deptMappings = [];
+                mappingRows.forEach(row => {
+                    const adDept = row.querySelector('input[type="text"]')?.value.trim();
+                    const platDept = row.querySelector('select')?.value;
+                    if (adDept && platDept) {
+                        config.deptMappings.push({ adDept, platDept });
+                    }
+                });
             }
             console.log('📦 保存认证源配置:', config);
-            alert('✅ 配置已保存。本地 + AD 并行策略已生效。');
+            alert('✅ 配置已保存。本地 + AD 并行策略已生效。\n📊 部门映射规则已加载：' + (config.deptMappings ? config.deptMappings.length : 0) + ' 条');
             closeModal('modal-auth-config');
         }
 
