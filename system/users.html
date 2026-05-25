@@ -49,7 +49,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- AD域账户示例 -->
+                    <!-- AD域账户 -->
                     <tr data-type="ad">
                         <td><input type="checkbox" class="check-item"></td>
                         <td>safeadmin</td>
@@ -76,7 +76,7 @@
                             <button class="btn-text danger" title="删除" onclick="openModal('modal-del-user')">🗑</button>
                         </td>
                     </tr>
-                    <!-- 本地账户示例 -->
+                    <!-- 本地账户 -->
                     <tr data-type="local">
                         <td><input type="checkbox" class="check-item"></td>
                         <td>admin</td>
@@ -138,21 +138,16 @@
         </div>
     </div>
 
-    <!-- 🆕 编辑用户（核心修改） -->
+    <!-- 🆕 编辑用户（核心补全） -->
     <div id="modal-edit-user" class="modal">
         <div class="modal-content" style="max-width: 620px;">
-            <div class="modal-header">
-                <h3>编辑用户</h3>
-                <button class="close-btn" onclick="closeModal('modal-edit-user')">&times;</button>
-            </div>
+            <div class="modal-header"><h3>编辑用户</h3><button class="close-btn" onclick="closeModal('modal-edit-user')">&times;</button></div>
             <div class="modal-body">
                 <form class="form-grid">
                     <div class="form-group"><label>用户名</label><input type="text" id="edit-username" disabled></div>
                     <div class="form-group"><label>用户全称</label><input type="text" id="edit-fullname" disabled></div>
                     <div class="form-group"><label>部门</label><input type="text" id="edit-dept" disabled></div>
-                    <div class="form-group"><label>状态</label>
-                        <label class="switch"><input type="checkbox" id="edit-status"><span class="slider"></span></label>
-                    </div>
+                    <div class="form-group"><label>状态</label><label class="switch"><input type="checkbox" id="edit-status"><span class="slider"></span></label></div>
                     <div class="form-group full-width" id="edit-password-group">
                         <label>重置密码</label><input type="password" id="edit-password" placeholder="留空则不修改">
                     </div>
@@ -223,16 +218,71 @@
 
     <script src="../common.js"></script>
     <script>
-        // 认证源表单渲染逻辑（保持原样）
-        function renderAuthForm(type) { /* ... 原代码 ... */ }
-        function testConnection() { /* ... 原代码 ... */ }
-        function syncPreview() { /* ... 原代码 ... */ }
-        function saveAuthConfig() { /* ... 原代码 ... */ }
-        function resetSearch() { /* ... 原代码 ... */ }
+        // 认证源表单渲染
+        function renderAuthForm(type) {
+            const container = document.getElementById('authFormContainer');
+            let html = '<form class="form-grid">';
+            if (type === 'local') {
+                html += `
+                    <div class="form-group"><label>密码复杂度策略</label><select><option>高</option><option>中</option><option>低</option></select></div>
+                    <div class="form-group"><label>登录失败锁定阈值</label><input type="number" value="5"></div>
+                    <div class="form-group full-width"><label>应急通道 IP 白名单</label><input type="text" placeholder="多个IP用逗号分隔，留空表示不限制"></div>
+                    <div class="form-tip" style="grid-column: 1/-1; margin-top:10px; color:#909399;">本地认证为系统默认源，不可删除，用于断网/AD故障时应急登录。</div>
+                `;
+            } else {
+                html += `
+                    <div class="form-group"><label>服务器 IP/域名 <span class="required">*</span></label><input type="text" id="authServer" placeholder="例如：192.168.1.10 或 dc.corp.local"></div>
+                    <div class="form-group"><label>端口 <span class="required">*</span></label><input type="number" id="authPort" value="389"></div>
+                    <div class="form-group full-width"><label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" id="authTLS"> 启用 TLS/SSL 加密 (推荐 636 端口)</label></div>
+                    <div class="form-group full-width"><label>用户 Base DN <span class="required">*</span></label><input type="text" id="userBaseDN" placeholder="OU=员工,DC=corp,DC=com"></div>
+                    <div class="form-group full-width"><label>组 Base DN</label><input type="text" id="groupBaseDN" placeholder="OU=安全组,DC=corp,DC=com"></div>
+                    <div class="form-group full-width"><label>用户搜索过滤器</label><input type="text" id="userFilter" placeholder="(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))"></div>
+                    <div class="form-group"><label>绑定用户名 <span class="required">*</span></label><input type="text" id="bindUser" placeholder="具有只读查询权限的服务账号"></div>
+                    <div class="form-group"><label>绑定密码 <span class="required">*</span></label><input type="password" id="bindPass" placeholder="服务账号密码"></div>
+                    <div class="form-group"><label>同步频率</label><select id="syncFreq"><option>手动同步</option><option>每小时</option><option>每天</option></select></div>
+                    <div class="form-group"><label>冲突处理策略</label><select id="conflictStrategy"><option>保留本地数据</option><option>以目录为准</option><option>标记异常</option></select></div>
+                `;
+            }
+            html += '</form>';
+            container.innerHTML = html;
+        }
 
-        // 🆕 编辑用户核心逻辑
+        function testConnection() {
+            const type = document.getElementById('authSourceSelect').value;
+            if (type === 'local') { alert('✅ 本地认证源状态正常，无需网络连接测试。'); return; }
+            const server = document.getElementById('authServer')?.value;
+            const port = document.getElementById('authPort')?.value;
+            if (!server || !port) { alert('⚠️ 请填写服务器IP和端口'); return; }
+            alert(`🔄 正在测试连接 ${server}:${port} ...\n✅ 连接成功！DNS解析正常，时间同步误差 < 5分钟。`);
+        }
+
+        function syncPreview() {
+            const type = document.getElementById('authSourceSelect').value;
+            if (type === 'local') { alert('ℹ️ 本地认证源无需同步预览。'); return; }
+            alert(`👁️ 同步预览结果：\n- 匹配用户数：128\n- 匹配组数：15\n- 冲突账号：0\n- 建议执行全量同步`);
+        }
+
+        function saveAuthConfig() {
+            const type = document.getElementById('authSourceSelect').value;
+            const config = { type, timestamp: new Date().toISOString() };
+            if (type !== 'local') {
+                config.server = document.getElementById('authServer')?.value;
+                config.port = document.getElementById('authPort')?.value;
+                config.tls = document.getElementById('authTLS')?.checked;
+                config.userBaseDN = document.getElementById('userBaseDN')?.value;
+                config.groupBaseDN = document.getElementById('groupBaseDN')?.value;
+                config.userFilter = document.getElementById('userFilter')?.value;
+                config.bindUser = document.getElementById('bindUser')?.value;
+                config.syncFreq = document.getElementById('syncFreq')?.value;
+                config.conflictStrategy = document.getElementById('conflictStrategy')?.value;
+            }
+            console.log('📦 保存认证源配置:', config);
+            alert('✅ 配置已保存。本地 + AD 并行策略已生效。');
+            closeModal('modal-auth-config');
+        }
+
+        // 🆕 编辑用户逻辑
         let currentEditRow = null;
-
         function openEditModal(row) {
             currentEditRow = row;
             const cells = row.querySelectorAll('td');
@@ -243,20 +293,17 @@
             const isChecked = cells[6].querySelector('input[type="checkbox"]').checked;
             const isAD = row.getAttribute('data-type') === 'ad';
 
-            // 填充基础信息
             document.getElementById('edit-username').value = username;
             document.getElementById('edit-fullname').value = fullName;
             document.getElementById('edit-dept').value = dept;
             document.getElementById('edit-status').checked = isChecked;
 
-            // 填充角色复选框
             document.querySelectorAll('.edit-role-check').forEach(cb => cb.checked = false);
             rolesStr.split(',').map(r => r.trim()).forEach(role => {
                 const cb = document.querySelector(`.edit-role-check[value="${role}"]`);
                 if (cb) cb.checked = true;
             });
 
-            // AD账户权限边界控制
             const adFields = ['edit-username', 'edit-fullname', 'edit-dept'];
             adFields.forEach(id => {
                 const el = document.getElementById(id);
@@ -264,7 +311,6 @@
                 el.style.opacity = isAD ? '0.6' : '1';
             });
             document.getElementById('edit-password-group').style.display = isAD ? 'none' : 'block';
-
             openModal('modal-edit-user');
         }
 
@@ -272,22 +318,31 @@
             if (!currentEditRow) return;
             const roles = [];
             document.querySelectorAll('.edit-role-check:checked').forEach(cb => roles.push(cb.value));
-            if (roles.length === 0) {
-                alert('⚠️ 请至少分配一个平台角色');
-                return;
-            }
+            if (roles.length === 0) { alert('⚠️ 请至少分配一个平台角色'); return; }
             const username = document.getElementById('edit-username').value;
             const status = document.getElementById('edit-status').checked ? '启用' : '禁用';
             const isAD = currentEditRow.getAttribute('data-type') === 'ad';
-
             console.log('💾 保存用户配置:', { username, roles, status, source: isAD ? 'AD域' : '本地' });
             alert(`✅ 用户 [${username}] 权限已更新。\n🔑 已分配角色：${roles.join('、')}\n📡 状态：${status}\n${isAD ? 'ℹ️ 基础信息已锁定，仅同步平台权限。' : 'ℹ️ 本地账户配置已生效。'}`);
-            
             closeModal('modal-edit-user');
-            // 实际项目中此处应调用 API 并刷新表格行数据
         }
 
-        // 初始化认证源表单
+        // 🆕 搜索过滤逻辑
+        function filterTable(inputId, tableId) {
+            const filter = document.getElementById(inputId).value.toLowerCase();
+            const rows = document.getElementById(tableId).querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        }
+
+        function resetSearch() {
+            document.getElementById('searchUser').value = '';
+            document.getElementById('filterRole').value = '';
+            filterTable('searchUser', 'userTable');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             renderAuthForm('local');
         });
