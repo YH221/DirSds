@@ -41,21 +41,18 @@
                         <th width="40"><input type="checkbox" class="check-all"></th>
                         <th>用户名</th>
                         <th>用户全称</th>
-                        <th>性别</th>
                         <th>部门</th>
-                        <th>角色名称</th>
                         <th>状态</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- ✅ 修正：每行严格保持 6 个 td，与表头一一对应 -->
                     <tr data-type="ad">
                         <td><input type="checkbox" class="check-item"></td>
                         <td>safeadmin</td>
                         <td>安全管理员</td>
-                        <td>-</td>
                         <td>安全部</td>
-                        <td>安全管理员</td>
                         <td><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></td>
                         <td>
                             <button class="btn-text" title="编辑" onclick="openEditModal(this.closest('tr'))">✎</button>
@@ -66,9 +63,7 @@
                         <td><input type="checkbox" class="check-item"></td>
                         <td>auditadmin</td>
                         <td>审计管理员</td>
-                        <td>-</td>
                         <td>审计部</td>
-                        <td>审计管理员</td>
                         <td><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></td>
                         <td>
                             <button class="btn-text" title="编辑" onclick="openEditModal(this.closest('tr'))">✎</button>
@@ -79,9 +74,7 @@
                         <td><input type="checkbox" class="check-item"></td>
                         <td>admin</td>
                         <td>系统管理员</td>
-                        <td>-</td>
                         <td>IT部</td>
-                        <td>数据库管理员,非结构化管理员,复制迁移管理员,系统管理员,虚拟化管理员,非结构化恢复操作员</td>
                         <td><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></td>
                         <td>
                             <button class="btn-text" title="编辑" onclick="openEditModal(this.closest('tr'))">✎</button>
@@ -92,9 +85,7 @@
                         <td><input type="checkbox" class="check-item"></td>
                         <td>rouser</td>
                         <td>恢复操作员</td>
-                        <td>-</td>
                         <td>运维部</td>
-                        <td>非结构化恢复操作员</td>
                         <td><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></td>
                         <td>
                             <button class="btn-text" title="编辑" onclick="openEditModal(this.closest('tr'))">✎</button>
@@ -215,7 +206,7 @@
                     <div class="form-group"><label>端口 <span class="required">*</span></label><input type="number" id="authPort" value="389"></div>
                     
                     <!-- 🆕 新增：绑定账号和密码 -->
-                    <div class="form-group full-width"><label>用户名 (Bind DN) <span class="required">*</span></label><input type="text" id="authBindUser" placeholder=""></div>
+                    <div class="form-group full-width"><label>用户名  <span class="required">*</span></label><input type="text" id="authBindUser" placeholder=""></div>
                     <div class="form-group full-width"><label>密码 <span class="required">*</span></label><input type="password" id="authBindPass" placeholder=""></div>
 
                     <div class="form-group full-width"><label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" id="authTLS"> 启用 TLS/SSL 加密 (推荐 636 端口)</label></div>
@@ -312,8 +303,8 @@
                 timestamp: new Date().toISOString(),
                 server: document.getElementById('authServer')?.value,
                 port: document.getElementById('authPort')?.value,
-                bindUser: document.getElementById('authBindUser')?.value, // 🆕 收集账号
-                bindPass: document.getElementById('authBindPass')?.value, // 🆕 收集密码
+                bindUser: document.getElementById('authBindUser')?.value,
+                bindPass: document.getElementById('authBindPass')?.value,
                 tls: document.getElementById('authTLS')?.checked,
                 userBaseDN: document.getElementById('userBaseDN')?.value,
                 groupBaseDN: document.getElementById('groupBaseDN')?.value,
@@ -322,7 +313,6 @@
                 conflictStrategy: document.getElementById('conflictStrategy')?.value
             };
 
-            // 收集部门映射规则
             const mappingRows = document.querySelectorAll('#deptMappingTable tbody tr');
             config.deptMappings = [];
             mappingRows.forEach(row => {
@@ -338,16 +328,16 @@
             closeModal('modal-auth-config');
         }
 
-        // 编辑用户逻辑
+        // ✅ 修正：编辑用户逻辑，严格匹配新表格列索引
         let currentEditRow = null;
         function openEditModal(row) {
             currentEditRow = row;
             const cells = row.querySelectorAll('td');
+            // 索引对应：0=复选框, 1=用户名, 2=用户全称, 3=部门, 4=状态开关, 5=操作按钮
             const username = cells[1].textContent.trim();
             const fullName = cells[2].textContent.trim();
-            const dept = cells[4].textContent.trim();
-            const rolesStr = cells[5].textContent.trim();
-            const isChecked = cells[6].querySelector('input[type="checkbox"]').checked;
+            const dept = cells[3].textContent.trim();
+            const isChecked = cells[4].querySelector('input[type="checkbox"]').checked;
             const isAD = row.getAttribute('data-type') === 'ad';
 
             document.getElementById('edit-username').value = username;
@@ -355,11 +345,13 @@
             document.getElementById('edit-dept').value = dept;
             document.getElementById('edit-status').checked = isChecked;
 
+            // 默认勾选第一个角色（实际应从后端获取，此处为演示）
             document.querySelectorAll('.edit-role-check').forEach(cb => cb.checked = false);
-            rolesStr.split(',').map(r => r.trim()).forEach(role => {
-                const cb = document.querySelector(`.edit-role-check[value="${role}"]`);
-                if (cb) cb.checked = true;
-            });
+            if(isAD) {
+                document.querySelector('.edit-role-check[value="安全管理员"]').checked = true;
+            } else {
+                document.querySelector('.edit-role-check[value="系统管理员"]').checked = true;
+            }
 
             const adFields = ['edit-username', 'edit-fullname', 'edit-dept'];
             adFields.forEach(id => {
