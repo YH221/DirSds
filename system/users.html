@@ -49,7 +49,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- AD域账户 -->
                     <tr data-type="ad">
                         <td><input type="checkbox" class="check-item"></td>
                         <td>safeadmin</td>
@@ -76,7 +75,6 @@
                             <button class="btn-text danger" title="删除" onclick="openModal('modal-del-user')">🗑</button>
                         </td>
                     </tr>
-                    <!-- 本地账户 -->
                     <tr data-type="local">
                         <td><input type="checkbox" class="check-item"></td>
                         <td>admin</td>
@@ -116,7 +114,7 @@
         </div>
     </div>
 
-    <!-- 新增用户 -->
+    <!-- 🆕 新增用户（仅保留4个字段） -->
     <div id="modal-add-user" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h3>新增用户</h3><button class="close-btn" onclick="closeModal('modal-add-user')">&times;</button></div>
@@ -124,11 +122,8 @@
                 <form class="form-grid">
                     <div class="form-group"><label>用户名 <span class="required">*</span></label><input type="text" placeholder="字母/数字/下划线"></div>
                     <div class="form-group"><label>用户全称 <span class="required">*</span></label><input type="text" placeholder="例如：张三"></div>
-                    <div class="form-group"><label>性别</label><select><option>男</option><option>女</option></select></div>
-                    <div class="form-group"><label>部门</label><input type="text" placeholder="例如：IT部"></div>
-                    <div class="form-group"><label>角色 <span class="required">*</span></label><select><option>系统管理员</option><option>审计管理员</option><option>恢复操作员</option></select></div>
-                    <div class="form-group"><label>密码 <span class="required">*</span></label><input type="password" placeholder="请输入密码"></div>
-                    <div class="form-group full-width"><label>确认密码 <span class="required">*</span></label><input type="password" placeholder="请再次输入密码"></div>
+                    <div class="form-group"><label>部门<span class="required">*</span></label><input type="text" placeholder="例如：IT部"></div>
+                    <div class="form-group"><label>状态</label><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -138,7 +133,7 @@
         </div>
     </div>
 
-    <!-- 🆕 编辑用户（核心补全） -->
+    <!-- 编辑用户 -->
     <div id="modal-edit-user" class="modal">
         <div class="modal-content" style="max-width: 620px;">
             <div class="modal-header"><h3>编辑用户</h3><button class="close-btn" onclick="closeModal('modal-edit-user')">&times;</button></div>
@@ -173,20 +168,13 @@
         </div>
     </div>
 
-    <!-- 认证源管理 -->
+    <!-- 🆕 认证源管理（仅保留AD，已移除本地认证） -->
     <div id="modal-auth-config" class="modal">
         <div class="modal-content" style="max-width: 700px;">
-            <div class="modal-header"><h3>认证源管理</h3><button class="close-btn" onclick="closeModal('modal-auth-config')">&times;</button></div>
+            <div class="modal-header"><h3>AD域认证配置</h3><button class="close-btn" onclick="closeModal('modal-auth-config')">&times;</button></div>
             <div class="modal-body">
                 <div class="form-tip" style="margin-bottom: 15px; color: #67c23a; background: #f0f9eb; padding: 10px; border-radius: 4px;">
-                    ℹ️ 支持本地 + AD 并行认证。本地账号作为应急兜底，不受 AD 故障影响。配置前请单击“测试连接”。
-                </div>
-                <div class="form-group full-width">
-                    <label>选择认证源 <span class="required">*</span></label>
-                    <select id="authSourceSelect" onchange="renderAuthForm(this.value)">
-                        <option value="local">本地认证 (默认启用)</option>
-                        <option value="ad">AD域认证 (ADS)</option>
-                    </select>
+                    ℹ️ 配置AD域连接参数，支持批量同步用户与部门映射。配置前请单击“测试连接”。
                 </div>
                 <div id="authFormContainer"></div>
                 <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -218,21 +206,18 @@
 
     <script src="../common.js"></script>
     <script>
-        // 认证源表单渲染
-        function renderAuthForm(type) {
+        // 渲染AD认证表单（已移除本地逻辑，增加账号密码）
+        function renderAuthForm() {
             const container = document.getElementById('authFormContainer');
-            let html = '<form class="form-grid">';
-            if (type === 'local') {
-                html += `
-                    <div class="form-group"><label>密码复杂度策略</label><select><option>高</option><option>中</option><option>低</option></select></div>
-                    <div class="form-group"><label>登录失败锁定阈值</label><input type="number" value="5"></div>
-                    <div class="form-group full-width"><label>应急通道 IP 白名单</label><input type="text" placeholder="多个IP用逗号分隔，留空表示不限制"></div>
-                    <div class="form-tip" style="grid-column: 1/-1; margin-top:10px; color:#909399;">本地认证为系统默认源，不可删除，用于断网/AD故障时应急登录。</div>
-                `;
-            } else {
-                html += `
+            container.innerHTML = `
+                <form class="form-grid">
                     <div class="form-group"><label>服务器 IP/域名 <span class="required">*</span></label><input type="text" id="authServer" placeholder="例如：192.168.1.10 或 dc.corp.local"></div>
                     <div class="form-group"><label>端口 <span class="required">*</span></label><input type="number" id="authPort" value="389"></div>
+                    
+                    <!-- 🆕 新增：绑定账号和密码 -->
+                    <div class="form-group full-width"><label>绑定账号 (Bind DN) <span class="required">*</span></label><input type="text" id="authBindUser" placeholder="例如：CORP\\svc_admin 或 svc_admin@corp.com"></div>
+                    <div class="form-group full-width"><label>绑定密码 <span class="required">*</span></label><input type="password" id="authBindPass" placeholder="请输入服务账号密码"></div>
+
                     <div class="form-group full-width"><label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" id="authTLS"> 启用 TLS/SSL 加密 (推荐 636 端口)</label></div>
                     <div class="form-group full-width"><label>用户 Base DN <span class="required">*</span></label><input type="text" id="userBaseDN" placeholder="OU=员工,DC=corp,DC=com"></div>
                     <div class="form-group full-width"><label>组 Base DN</label><input type="text" id="groupBaseDN" placeholder="OU=安全组,DC=corp,DC=com"></div>
@@ -277,10 +262,8 @@
 
                     <div class="form-group"><label>同步频率</label><select id="syncFreq"><option>手动同步</option><option>每小时</option><option>每天</option></select></div>
                     <div class="form-group"><label>冲突处理策略</label><select id="conflictStrategy"><option>保留本地数据</option><option>以目录为准</option><option>标记异常</option></select></div>
-                `;
-            }
-            html += '</form>';
-            container.innerHTML = html;
+                </form>
+            `;
         }
 
         // 动态添加部门映射行
@@ -307,50 +290,55 @@
         }
 
         function testConnection() {
-            const type = document.getElementById('authSourceSelect').value;
-            if (type === 'local') { alert('✅ 本地认证源状态正常，无需网络连接测试。'); return; }
             const server = document.getElementById('authServer')?.value;
             const port = document.getElementById('authPort')?.value;
-            if (!server || !port) { alert('⚠️ 请填写服务器IP和端口'); return; }
-            alert(`🔄 正在测试连接 ${server}:${port} ...\n✅ 连接成功！DNS解析正常，时间同步误差 < 5分钟。`);
+            const bindUser = document.getElementById('authBindUser')?.value;
+            const bindPass = document.getElementById('authBindPass')?.value;
+
+            if (!server || !port || !bindUser || !bindPass) { 
+                alert('⚠️ 请填写服务器IP、端口、绑定账号和密码'); 
+                return; 
+            }
+            alert(`🔄 正在测试连接 ${server}:${port} ...\n👤 使用账号: ${bindUser}\n✅ 连接成功！DNS解析正常，时间同步误差 < 5分钟。`);
         }
 
         function syncPreview() {
-            const type = document.getElementById('authSourceSelect').value;
-            if (type === 'local') { alert('ℹ️ 本地认证源无需同步预览。'); return; }
             alert(`👁️ 同步预览结果：\n- 匹配用户数：128\n- 匹配组数：15\n- 冲突账号：0\n- 建议执行全量同步`);
         }
 
         function saveAuthConfig() {
-            const type = document.getElementById('authSourceSelect').value;
-            const config = { type, timestamp: new Date().toISOString() };
-            if (type !== 'local') {
-                config.server = document.getElementById('authServer')?.value;
-                config.port = document.getElementById('authPort')?.value;
-                config.tls = document.getElementById('authTLS')?.checked;
-                config.userBaseDN = document.getElementById('userBaseDN')?.value;
-                config.groupBaseDN = document.getElementById('groupBaseDN')?.value;
-                config.userFilter = document.getElementById('userFilter')?.value;
-                config.syncFreq = document.getElementById('syncFreq')?.value;
-                config.conflictStrategy = document.getElementById('conflictStrategy')?.value;
+            const config = { 
+                type: 'ad', 
+                timestamp: new Date().toISOString(),
+                server: document.getElementById('authServer')?.value,
+                port: document.getElementById('authPort')?.value,
+                bindUser: document.getElementById('authBindUser')?.value, // 🆕 收集账号
+                bindPass: document.getElementById('authBindPass')?.value, // 🆕 收集密码
+                tls: document.getElementById('authTLS')?.checked,
+                userBaseDN: document.getElementById('userBaseDN')?.value,
+                groupBaseDN: document.getElementById('groupBaseDN')?.value,
+                userFilter: document.getElementById('userFilter')?.value,
+                syncFreq: document.getElementById('syncFreq')?.value,
+                conflictStrategy: document.getElementById('conflictStrategy')?.value
+            };
 
-                // 收集部门映射规则
-                const mappingRows = document.querySelectorAll('#deptMappingTable tbody tr');
-                config.deptMappings = [];
-                mappingRows.forEach(row => {
-                    const adDept = row.querySelector('input[type="text"]')?.value.trim();
-                    const platDept = row.querySelector('select')?.value;
-                    if (adDept && platDept) {
-                        config.deptMappings.push({ adDept, platDept });
-                    }
-                });
-            }
-            console.log('📦 保存认证源配置:', config);
-            alert('✅ 配置已保存。本地 + AD 并行策略已生效。\n📊 部门映射规则已加载：' + (config.deptMappings ? config.deptMappings.length : 0) + ' 条');
+            // 收集部门映射规则
+            const mappingRows = document.querySelectorAll('#deptMappingTable tbody tr');
+            config.deptMappings = [];
+            mappingRows.forEach(row => {
+                const adDept = row.querySelector('input[type="text"]')?.value.trim();
+                const platDept = row.querySelector('select')?.value;
+                if (adDept && platDept) {
+                    config.deptMappings.push({ adDept, platDept });
+                }
+            });
+
+            console.log('📦 保存AD认证配置:', config);
+            alert('✅ AD域配置已保存。\n📊 部门映射规则已加载：' + config.deptMappings.length + ' 条');
             closeModal('modal-auth-config');
         }
 
-        // 🆕 编辑用户逻辑
+        // 编辑用户逻辑
         let currentEditRow = null;
         function openEditModal(row) {
             currentEditRow = row;
@@ -396,7 +384,7 @@
             closeModal('modal-edit-user');
         }
 
-        // 🆕 搜索过滤逻辑
+        // 搜索过滤逻辑
         function filterTable(inputId, tableId) {
             const filter = document.getElementById(inputId).value.toLowerCase();
             const rows = document.getElementById(tableId).querySelectorAll('tbody tr');
@@ -413,7 +401,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderAuthForm('local');
+            renderAuthForm();
         });
     </script>
 </body>
