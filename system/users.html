@@ -215,8 +215,8 @@
                     <div class="form-group"><label>端口 <span class="required">*</span></label><input type="number" id="authPort" value="389"></div>
                     
                     <!-- 🆕 新增：绑定账号和密码 -->
-                    <div class="form-group full-width"><label>绑定账号 (Bind DN) <span class="required">*</span></label><input type="text" id="authBindUser" placeholder="例如：CORP\\svc_admin 或 svc_admin@corp.com"></div>
-                    <div class="form-group full-width"><label>绑定密码 <span class="required">*</span></label><input type="password" id="authBindPass" placeholder="请输入服务账号密码"></div>
+                    <div class="form-group full-width"><label>用户名 (Bind DN) <span class="required">*</span></label><input type="text" id="authBindUser" placeholder=""></div>
+                    <div class="form-group full-width"><label>密码 <span class="required">*</span></label><input type="password" id="authBindPass" placeholder=""></div>
 
                     <div class="form-group full-width"><label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" id="authTLS"> 启用 TLS/SSL 加密 (推荐 636 端口)</label></div>
                     <div class="form-group full-width"><label>用户 Base DN <span class="required">*</span></label><input type="text" id="userBaseDN" placeholder="OU=员工,DC=corp,DC=com"></div>
