@@ -9,51 +9,10 @@
     <script src="../../common.js"></script>
     <script src="storage.js"></script>
 </head>
-<body>
-    <!-- 顶部导航... -->
- <nav class="top-nav">
-        <div class="header-left">
-            <div class="logo">灾备管理平台</div>
-            <div class="top-menu">
-                <a href="../monitor/monitor-client.html">首页</a>
-                <a href="../../system/config.htmll">系统管理</a>
-                <a href="../../monitor/index.html">监控中心</a>
-                <a href="../../unstructured/client-detail.html" class="active">非结构化备份</a>
-            </nav>
-        </div>
-        <div class="header-right">
-            <span>系统管理员</span>
-            <a href="#">退出</a>
-        </div>
-    </header>
-   <aside class="sidebar">
-            <nav>
-                <div class="menu-group">
-                    <ul class="menu-list">
-                        <li><a href="../client.html">客户端管理</a></li>
-                        <li class="has-submenu">
-                            <a href="javascript:void(0);" class="submenu-toggle" onclick="toggleSubmenu(this)">
-                                <span class="menu-icon">☰</span>
-                                <span>存储管理</span>
-                                <span class="arrow">▼</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="storage-policy.html" >存储策略</a></li>
-                                <li><a href="storage-migrate-policy.html">复制迁移策略</a></li>
-                                <li><a href="storage-migrate-task.html" class="active">复制迁移任务</a></li>
-                                <li><a href="storage-offline.html">离线介质管理</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="../takeover.html" >接管管理</a></li>
-                        <li><a href="../export.html">数据导出</a></li>
-                        <li><a href="../search.html" >全文检索</a></li>
-                        <li><a href="../tags.html" >标签策略</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </aside>
+<body data-module="unstructured">
+   
 
-    <main class="main-content">
+    <div id="page-content">
         <div class="breadcrumb-bar">
             <ol class="breadcrumb">
                 <li><a href="#">首页</a></li>
@@ -124,6 +83,6 @@
                 </select>
             </div>
         </div>
-    </main>
+    </div>
 </body>
 </html>

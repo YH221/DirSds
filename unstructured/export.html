@@ -4,160 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>数据导出 - 非结构化备份</title>
-         <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="../common.css">
     <link rel="stylesheet" href="storage/css/storage.css">
+</head>
+<!-- ✅ 添加 data-module 标识 -->
+<body data-module="unstructured">
+
+    <!-- ✅ 业务内容统一包裹在 #page-content 中 -->
+    <div id="page-content">
+        <nav class="breadcrumb">
+            <a href="../index.html">首页</a>
+            <span class="sep">/</span>
+            <span>非结构化备份</span>
+            <span class="sep">/</span>
+            <span class="current">数据导出</span>
+        </nav>
+        <h1 class="page-title">数据导出</h1>
+
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="openModal('modal-add-export')">新建导出任务</button>
+            <div class="filter-bar">
+                <select>
+                    <option>全部状态</option>
+                    <option>进行中</option>
+                    <option>已完成</option>
+                    <option>失败</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>任务名称</th>
+                        <th>源客户端</th>
+                        <th>导出目标</th>
+                        <th>数据大小</th>
+                        <th>创建时间</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>EXP-Finance-To-NAS</strong></td>
+                        <td>Client-Win-01</td>
+                        <td>Pool-NAS-01:/exports/finance</td>
+                        <td>450 GB</td>
+                        <td>2024-01-15 09:00</td>
+                        <td><span class="status-badge success">已完成</span></td>
+                        <td>
+                            <button class="btn-text">查看日志</button>
+                            <button class="btn-text">重新导出</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>EXP-HR-Package</strong></td>
+                        <td>Client-Linux-05</td>
+                        <td>本地磁盘 /data/export</td>
+                        <td>12 GB</td>
+                        <td>2024-01-14 16:30</td>
+                        <td><span class="status-badge warning">进行中</span></td>
+                        <td>
+                            <button class="btn-text">查看进度</button>
+                            <button class="btn-text danger">取消</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 模态框 -->
+        <div id="modal-add-export" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>新建导出任务</h3>
+                    <button class="close-btn" onclick="closeModal('modal-add-export')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-grid">
+                        <div class="form-group">
+                            <label>任务名称 <span class="required">*</span></label>
+                            <input type="text" placeholder="例如：EXP-Project-01">
+                        </div>
+                        <div class="form-group">
+                            <label>源客户端 <span class="required">*</span></label>
+                            <select>
+                                <option>Client-Win-01</option>
+                                <option>Client-Linux-05</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>导出目标类型 <span class="required">*</span></label>
+                            <select>
+                                <option>存储池</option>
+                                <option>本地挂载</option>
+                                <option>FTP/SFTP</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>目标路径 <span class="required">*</span></label>
+                            <input type="text" placeholder="例如：Pool-NAS-01:/exports/xxx">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" onclick="closeModal('modal-add-export')">取消</button>
+                    <button class="btn btn-primary">创建任务</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="../common.js"></script>
     <script src="storage/js/storage.js"></script>
-</head>
-<body>
-    <header class="top-nav">
-        <div class="logo">灾备管理平台</div>
-        <nav class="top-menu">
-            <a href="../index.html">概览</a>
-            <a href="../system/config.html">系统管理</a>
-            <a href="../monitor/index.html">监控中心</a>
-            <a href="./client.html" class="active">非结构化备份</a>
-        </nav>
-        <div class="user-info">
-            <span>管理员</span>
-            <a href="../login.html" class="logout">退出</a>
-        </div>
-    </header>
-
-    <div class="main-container">
-   <aside class="sidebar">
-            <nav>
-                <div class="menu-group">
-                    <ul class="menu-list">
-                        <li><a href="./client.html">客户端管理</a></li>
-                        <li class="has-submenu">
-                            <a href="javascript:void(0);" class="submenu-toggle" onclick="toggleSubmenu(this)">
-                                <span class="menu-icon">☰</span>
-                                <span>存储管理</span>
-                                <span class="arrow">▼</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="./storage/storage-policy.html">存储策略</a></li>
-                                <li><a href="./storage/storage-migrate-policy.html">复制迁移策略</a></li>
-                                <li><a href="./storage/storage-migrate-task.html">复制迁移任务</a></li>
-                                <li><a href="./storage/storage-offline.html">离线介质管理</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="./takeover.html" >接管管理</a></li>
-                        <li><a href="./export.html" class="active">数据导出</a></li>
-                        <li><a href="./search.html"  >全文检索</a></li>
-                        <li><a href="./tags.html" >标签策略</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </aside>
-
-        <main class="content">
-            <nav class="breadcrumb">
-                <a href="../index.html">首页</a>
-                <span class="sep">/</span>
-                <span>非结构化备份</span>
-                <span class="sep">/</span>
-                <span class="current">数据导出</span>
-            </nav>
-            <h1 class="page-title">数据导出</h1>
-
-            <div class="toolbar">
-                <button class="btn btn-primary" onclick="openModal('modal-add-export')">新建导出任务</button>
-                <div class="filter-bar">
-                    <select>
-                        <option>全部状态</option>
-                        <option>进行中</option>
-                        <option>已完成</option>
-                        <option>失败</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="card">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>任务名称</th>
-                            <th>源客户端</th>
-                            <th>导出目标</th>
-                            <th>数据大小</th>
-                            <th>创建时间</th>
-                            <th>状态</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>EXP-Finance-To-NAS</strong></td>
-                            <td>Client-Win-01</td>
-                            <td>Pool-NAS-01:/exports/finance</td>
-                            <td>450 GB</td>
-                            <td>2024-01-15 09:00</td>
-                            <td><span class="status-badge success">已完成</span></td>
-                            <td>
-                                <button class="btn-text">查看日志</button>
-                                <button class="btn-text">重新导出</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>EXP-HR-Package</strong></td>
-                            <td>Client-Linux-05</td>
-                            <td>本地磁盘 /data/export</td>
-                            <td>12 GB</td>
-                            <td>2024-01-14 16:30</td>
-                            <td><span class="status-badge warning">进行中</span></td>
-                            <td>
-                                <button class="btn-text">查看进度</button>
-                                <button class="btn-text danger">取消</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
-    </div>
-
-    <div id="modal-add-export" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>新建导出任务</h3>
-                <button class="close-btn" onclick="closeModal('modal-add-export')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form class="form-grid">
-                    <div class="form-group">
-                        <label>任务名称 <span class="required">*</span></label>
-                        <input type="text" placeholder="例如：EXP-Project-01">
-                    </div>
-                    <div class="form-group">
-                        <label>源客户端 <span class="required">*</span></label>
-                        <select>
-                            <option>Client-Win-01</option>
-                            <option>Client-Linux-05</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>导出目标类型 <span class="required">*</span></label>
-                        <select>
-                            <option>存储池</option>
-                            <option>本地挂载</option>
-                            <option>FTP/SFTP</option>
-                        </select>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>目标路径 <span class="required">*</span></label>
-                        <input type="text" placeholder="例如：Pool-NAS-01:/exports/xxx">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeModal('modal-add-export')">取消</button>
-                <button class="btn btn-primary">创建任务</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="../common.js"></script>
 </body>
 </html>

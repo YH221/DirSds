@@ -7,110 +7,71 @@
     <link rel="stylesheet" href="../common.css">
     <link rel="stylesheet" href="storage/css/storage.css">
 </head>
-<body>
-    <header class="top-nav">
-        <div class="logo">灾备管理平台</div>
-        <nav class="top-menu">
-            <a href="../index.html">概览</a>
-            <a href="../system/config.html">系统管理</a>
-            <a href="../monitor/index.html">监控中心</a>
-            <a href="./client.html" class="active">非结构化备份</a>
+<!-- ✅ 关键1：添加 data-module 标识，让 common.js 知道加载哪个侧边栏 -->
+<body data-module="unstructured">
+
+    <!-- ✅ 关键2：业务内容统一包裹在 #page-content 中，common.js 会自动将其移入右侧内容区 -->
+    <div id="page-content">
+        <nav class="breadcrumb">
+            <a href="../index.html">首页</a>
+            <span class="sep">/</span>
+            <span>非结构化备份</span>
+            <span class="sep">/</span>
+            <span class="current">接管管理</span>
         </nav>
-        <div class="user-info">
-            <span>管理员</span>
-            <a href="../login.html" class="logout">退出</a>
+        <h1 class="page-title">接管管理</h1>
+
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="openModal('modal-add-takeover')">创建接管点</button>
+            <div class="search-box">
+                <input type="text" placeholder="搜索接管点名称...">
+                <button class="btn">搜索</button>
+            </div>
         </div>
-    </header>
 
-    <div class="main-container">
-        <aside class="sidebar">
-            <nav>
-                <div class="menu-group">
-                    <ul class="menu-list">
-                        <li><a href="./client.html">客户端管理</a></li>
-                        <li class="has-submenu">
-                            <a href="javascript:void(0);" class="submenu-toggle" onclick="toggleSubmenu(this)">
-                                <span class="menu-icon">☰</span>
-                                <span>存储管理</span>
-                                <span class="arrow">▼</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="./storage/storage-policy.html">存储策略</a></li>
-                                <li><a href="./storage/storage-migrate-policy.html">复制迁移策略</a></li>
-                                <li><a href="./storage/storage-migrate-task.html">复制迁移任务</a></li>
-                                <li><a href="./storage/storage-offline.html">离线介质管理</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="./takeover.html" class="active">接管管理</a></li>
-                        <li><a href="./export.html">数据导出</a></li>
-                        <li><a href="./search.html">全文检索</a></li>
-                        <li><a href="./tags.html">标签策略</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </aside>
-
-        <main class="content">
-            <nav class="breadcrumb">
-                <a href="../index.html">首页</a>
-                <span class="sep">/</span>
-                <span>非结构化备份</span>
-                <span class="sep">/</span>
-                <span class="current">接管管理</span>
-            </nav>
-            <h1 class="page-title">接管管理</h1>
-
-            <div class="toolbar">
-                <button class="btn btn-primary" onclick="openModal('modal-add-takeover')">创建接管点</button>
-                <div class="search-box">
-                    <input type="text" placeholder="搜索接管点名称...">
-                    <button class="btn">搜索</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>接管点名称</th>
-                            <th>源客户端</th>
-                            <th>目标路径</th>
-                            <th>创建时间</th>
-                            <th>状态</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>TK-Finance-20240115</strong></td>
-                            <td>Client-Win-01</td>
-                            <td>/mnt/takeover/finance</td>
-                            <td>2024-01-15 02:30</td>
-                            <td><span class="status-badge success">可用</span></td>
-                            <td>
-                                <button class="btn-text">挂载</button>
-                                <button class="btn-text" onclick="openModal('modal-drill')">演练</button>
-                                <button class="btn-text danger">删除</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>TK-HR-Weekly</strong></td>
-                            <td>Client-Linux-05</td>
-                            <td>/mnt/takeover/hr</td>
-                            <td>2024-01-14 01:00</td>
-                            <td><span class="status-badge info">演练中</span></td>
-                            <td>
-                                <button class="btn-text">查看</button>
-                                <button class="btn-text">停止演练</button>
-                                <button class="btn-text danger">删除</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
+        <div class="card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>接管点名称</th>
+                        <th>源客户端</th>
+                        <th>目标路径</th>
+                        <th>创建时间</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>TK-Finance-20240115</strong></td>
+                        <td>Client-Win-01</td>
+                        <td>/mnt/takeover/finance</td>
+                        <td>2024-01-15 02:30</td>
+                        <td><span class="status-badge success">可用</span></td>
+                        <td>
+                            <button class="btn-text">挂载</button>
+                            <button class="btn-text" onclick="openModal('modal-drill')">演练</button>
+                            <button class="btn-text danger">删除</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>TK-HR-Weekly</strong></td>
+                        <td>Client-Linux-05</td>
+                        <td>/mnt/takeover/hr</td>
+                        <td>2024-01-14 01:00</td>
+                        <td><span class="status-badge info">演练中</span></td>
+                        <td>
+                            <button class="btn-text">查看</button>
+                            <button class="btn-text">停止演练</button>
+                            <button class="btn-text danger">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
+    <!-- 模态框（保持在 body 层级，不受布局注入影响） -->
     <div id="modal-add-takeover" class="modal">
         <div class="modal-content">
             <div class="modal-header">

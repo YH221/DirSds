@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>标签策略 - 非结构化备份</title>
-     <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="../common.css">
     <link rel="stylesheet" href="storage/css/storage.css">
-    <script src="../common.js"></script>
-    <script src="storage/js/storage.js"></script>
     <style>
         .tag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
         .tag-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; position: relative; }
@@ -23,211 +21,171 @@
         .priority-badge { background: var(--gray-100); color: var(--gray-600); padding: 2px 8px; border-radius: 4px; font-size: 12px; }
     </style>
 </head>
-<body>
-    <header class="top-nav">
-        <div class="logo">灾备管理平台</div>
-        <nav class="top-menu">
-            <a href="../index.html">概览</a>
-            <a href="../system/config.html">系统管理</a>
-            <a href="../monitor/index.html">监控中心</a>
-            <a href="./client.html" class="active">非结构化备份</a>
+<body data-module="unstructured">
+
+    <div id="page-content">
+        <nav class="breadcrumb">
+            <a href="../index.html">首页</a>
+            <span class="sep">/</span>
+            <span>非结构化备份</span>
+            <span class="sep">/</span>
+            <span class="current">标签策略</span>
         </nav>
-        <div class="user-info">
-            <span>管理员</span>
-            <a href="../login.html" class="logout">退出</a>
+        <h1 class="page-title">标签策略</h1>
+
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="openModal('modal-add-tag')">新建标签</button>
+            <button class="btn" onclick="openModal('modal-add-rule')">配置自动规则</button>
         </div>
-    </header>
 
-    <div class="main-container">
-          <aside class="sidebar">
-            <nav>
-                <div class="menu-group">
-                    <ul class="menu-list">
-                        <li><a href="./client.html">客户端管理</a></li>
-                        <li class="has-submenu">
-                            <a href="javascript:void(0);" class="submenu-toggle" onclick="toggleSubmenu(this)">
-                                <span class="menu-icon">☰</span>
-                                <span>存储管理</span>
-                                <span class="arrow">▼</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="./storage/storage-policy.html">存储策略</a></li>
-                                <li><a href="./storage/storage-migrate-policy.html">复制迁移策略</a></li>
-                                <li><a href="./storage/storage-migrate-task.html">复制迁移任务</a></li>
-                                <li><a href="./storage/storage-offline.html">离线介质管理</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="./takeover.html" >接管管理</a></li>
-                        <li><a href="./export.html">数据导出</a></li>
-                        <li><a href="./search.html">全文检索</a></li>
-                        <li><a href="./tags.html" class="active">标签策略</a></li>
-                    </ul>
+        <div class="tag-grid">
+            <div class="tag-card">
+                <div class="tag-header">
+                    <div class="tag-dot" style="background: #ef4444;"></div>
+                    <div class="tag-name">核心财务数据</div>
                 </div>
-            </nav>
-        </aside>
-
-        <main class="content">
-            <nav class="breadcrumb">
-                <a href="../index.html">首页</a>
-                <span class="sep">/</span>
-                <span>非结构化备份</span>
-                <span class="sep">/</span>
-                <span class="current">标签策略</span>
-            </nav>
-            <h1 class="page-title">标签策略</h1>
-
-            <div class="toolbar">
-                <button class="btn btn-primary" onclick="openModal('modal-add-tag')">新建标签</button>
-                <button class="btn" onclick="openModal('modal-add-rule')">配置自动规则</button>
-            </div>
-
-            <div class="tag-grid">
-                <div class="tag-card">
-                    <div class="tag-header">
-                        <div class="tag-dot" style="background: #ef4444;"></div>
-                        <div class="tag-name">核心财务数据</div>
-                    </div>
-                    <div class="tag-stats">
-                        <span>规则: 2 条</span>
-                        <span>文件: 12,405</span>
-                    </div>
-                    <div class="tag-rule">路径包含 /Finance/ 或 /fina...</div>
-                    <div class="tag-actions">
-                        <button class="btn-text">编辑</button>
-                        <button class="btn-text danger">删除</button>
-                    </div>
+                <div class="tag-stats">
+                    <span>规则: 2 条</span>
+                    <span>文件: 12,405</span>
                 </div>
-                <div class="tag-card">
-                    <div class="tag-header">
-                        <div class="tag-dot" style="background: #3b82f6;"></div>
-                        <div class="tag-name">研发代码仓库</div>
-                    </div>
-                    <div class="tag-stats">
-                        <span>规则: 1 条</span>
-                        <span>文件: 89,200</span>
-                    </div>
-                    <div class="tag-rule">后缀名: .java, .py, .js, .go</div>
-                    <div class="tag-actions">
-                        <button class="btn-text">编辑</button>
-                        <button class="btn-text danger">删除</button>
-                    </div>
-                </div>
-                <div class="tag-card">
-                    <div class="tag-header">
-                        <div class="tag-dot" style="background: #10b981;"></div>
-                        <div class="tag-name">人事档案</div>
-                    </div>
-                    <div class="tag-stats">
-                        <span>规则: 2 条</span>
-                        <span>文件: 3,108</span>
-                    </div>
-                    <div class="tag-rule">路径包含 /HR/ 且 正则匹配...</div>
-                    <div class="tag-actions">
-                        <button class="btn-text">编辑</button>
-                        <button class="btn-text danger">删除</button>
-                    </div>
-                </div>
-            </div>
-
-            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">自动标签规则列表</h3>
-            <div class="rule-list">
-                <div class="rule-row">
-                    <span class="priority-badge">优先级 1</span>
-                    <span style="flex:1;"><strong>核心财务数据</strong>：路径包含 <code>/Finance/</code> 或 <code>/财务/</code></span>
-                    <span class="status-badge success">启用</span>
+                <div class="tag-rule">路径包含 /Finance/ 或 /fina...</div>
+                <div class="tag-actions">
                     <button class="btn-text">编辑</button>
+                    <button class="btn-text danger">删除</button>
                 </div>
-                <div class="rule-row">
-                    <span class="priority-badge">优先级 2</span>
-                    <span style="flex:1;"><strong>研发代码仓库</strong>：文件后缀属于 <code>.java, .py, .js, .go, .ts</code></span>
-                    <span class="status-badge success">启用</span>
+            </div>
+            <div class="tag-card">
+                <div class="tag-header">
+                    <div class="tag-dot" style="background: #3b82f6;"></div>
+                    <div class="tag-name">研发代码仓库</div>
+                </div>
+                <div class="tag-stats">
+                    <span>规则: 1 条</span>
+                    <span>文件: 89,200</span>
+                </div>
+                <div class="tag-rule">后缀名: .java, .py, .js, .go</div>
+                <div class="tag-actions">
                     <button class="btn-text">编辑</button>
+                    <button class="btn-text danger">删除</button>
                 </div>
-                <div class="rule-row">
-                    <span class="priority-badge">优先级 3</span>
-                    <span style="flex:1;"><strong>人事档案</strong>：路径包含 <code>/HR/</code> 且文件名匹配正则 <code>^\d{4}[_-].*\.(pdf|docx?)$</code></span>
-                    <span class="status-badge info">禁用</span>
+            </div>
+            <div class="tag-card">
+                <div class="tag-header">
+                    <div class="tag-dot" style="background: #10b981;"></div>
+                    <div class="tag-name">人事档案</div>
+                </div>
+                <div class="tag-stats">
+                    <span>规则: 2 条</span>
+                    <span>文件: 3,108</span>
+                </div>
+                <div class="tag-rule">路径包含 /HR/ 且 正则匹配...</div>
+                <div class="tag-actions">
                     <button class="btn-text">编辑</button>
+                    <button class="btn-text danger">删除</button>
                 </div>
-            </div>
-        </main>
-    </div>
-
-    <div id="modal-add-tag" class="modal">
-        <div class="modal-content" style="max-width: 480px;">
-            <div class="modal-header">
-                <h3>新建标签</h3>
-                <button class="close-btn" onclick="closeModal('modal-add-tag')">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form class="form-grid">
-                    <div class="form-group">
-                        <label>标签名称 <span class="required">*</span></label>
-                        <input type="text" placeholder="例如：核心财务数据">
-                    </div>
-                    <div class="form-group">
-                        <label>标识颜色</label>
-                        <input type="color" value="#2563eb" style="height: 36px; padding: 2px;">
-                    </div>
-                    <div class="form-group full-width">
-                        <label>描述</label>
-                        <textarea rows="3" placeholder="标签用途说明..."></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeModal('modal-add-tag')">取消</button>
-                <button class="btn btn-primary">创建</button>
             </div>
         </div>
-    </div>
 
-    <div id="modal-add-rule" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3>配置自动标签规则</h3>
-                <button class="close-btn" onclick="closeModal('modal-add-rule')">&times;</button>
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">自动标签规则列表</h3>
+        <div class="rule-list">
+            <div class="rule-row">
+                <span class="priority-badge">优先级 1</span>
+                <span style="flex:1;"><strong>核心财务数据</strong>：路径包含 <code>/Finance/</code> 或 <code>/财务/</code></span>
+                <span class="status-badge success">启用</span>
+                <button class="btn-text">编辑</button>
             </div>
-            <div class="modal-body">
-                <form class="form-grid">
-                    <div class="form-group">
-                        <label>选择标签 <span class="required">*</span></label>
-                        <select>
-                            <option>核心财务数据</option>
-                            <option>研发代码仓库</option>
-                            <option>人事档案</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>条件类型 <span class="required">*</span></label>
-                        <select>
-                            <option>路径包含</option>
-                            <option>文件后缀</option>
-                            <option>正则匹配（路径/文件名）</option>
-                            <option>文件大小大于</option>
-                        </select>
-                    </div>
-                    <div class="form-group full-width">
-                        <label>条件值 <span class="required">*</span></label>
-                        <input type="text" placeholder="例如：/Finance/ 或 .pdf">
-                    </div>
-                    <div class="form-group">
-                        <label>优先级</label>
-                        <input type="number" value="10" min="1" max="100">
-                    </div>
-                    <div class="form-group">
-                        <label>状态</label>
-                        <select><option>启用</option><option>禁用</option></select>
-                    </div>
-                </form>
+            <div class="rule-row">
+                <span class="priority-badge">优先级 2</span>
+                <span style="flex:1;"><strong>研发代码仓库</strong>：文件后缀属于 <code>.java, .py, .js, .go, .ts</code></span>
+                <span class="status-badge success">启用</span>
+                <button class="btn-text">编辑</button>
             </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeModal('modal-add-rule')">取消</button>
-                <button class="btn btn-primary">保存规则</button>
+            <div class="rule-row">
+                <span class="priority-badge">优先级 3</span>
+                <span style="flex:1;"><strong>人事档案</strong>：路径包含 <code>/HR/</code> 且文件名匹配正则 <code>^\d{4}[_-].*\.(pdf|docx?)$</code></span>
+                <span class="status-badge info">禁用</span>
+                <button class="btn-text">编辑</button>
+            </div>
+        </div>
+
+        <!-- 模态框 -->
+        <div id="modal-add-tag" class="modal">
+            <div class="modal-content" style="max-width: 480px;">
+                <div class="modal-header">
+                    <h3>新建标签</h3>
+                    <button class="close-btn" onclick="closeModal('modal-add-tag')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-grid">
+                        <div class="form-group">
+                            <label>标签名称 <span class="required">*</span></label>
+                            <input type="text" placeholder="例如：核心财务数据">
+                        </div>
+                        <div class="form-group">
+                            <label>标识颜色</label>
+                            <input type="color" value="#2563eb" style="height: 36px; padding: 2px;">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>描述</label>
+                            <textarea rows="3" placeholder="标签用途说明..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" onclick="closeModal('modal-add-tag')">取消</button>
+                    <button class="btn btn-primary">创建</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-add-rule" class="modal">
+            <div class="modal-content" style="max-width: 600px;">
+                <div class="modal-header">
+                    <h3>配置自动标签规则</h3>
+                    <button class="close-btn" onclick="closeModal('modal-add-rule')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-grid">
+                        <div class="form-group">
+                            <label>选择标签 <span class="required">*</span></label>
+                            <select>
+                                <option>核心财务数据</option>
+                                <option>研发代码仓库</option>
+                                <option>人事档案</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>条件类型 <span class="required">*</span></label>
+                            <select>
+                                <option>路径包含</option>
+                                <option>文件后缀</option>
+                                <option>正则匹配（路径/文件名）</option>
+                                <option>文件大小大于</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>条件值 <span class="required">*</span></label>
+                            <input type="text" placeholder="例如：/Finance/ 或 .pdf">
+                        </div>
+                        <div class="form-group">
+                            <label>优先级</label>
+                            <input type="number" value="10" min="1" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>状态</label>
+                            <select><option>启用</option><option>禁用</option></select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" onclick="closeModal('modal-add-rule')">取消</button>
+                    <button class="btn btn-primary">保存规则</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="../common.js"></script>
+    <script src="storage/js/storage.js"></script>
 </body>
 </html>

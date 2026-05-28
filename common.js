@@ -1,30 +1,31 @@
 /* js/common.js */
 (function() {
-    // 1. 顶部导航栏 HTML（全局统一）
+       // 1. 顶部导航栏 HTML（全局统一）
     const topNavHTML = `
     <header class="top-nav">
         <div class="logo">灾备管理平台</div>
         <nav class="top-menu">
-            <a href="../index.html">概览</a>
-            <a href="../system/config.html">系统管理</a>
-            <a href="../monitor/index.html">监控中心</a>
-            <a href="./client.html">非结构化备份</a>
+            <a href="/index.html">概览</a>
+            <a href="/system/config.html">系统管理</a>
+            <a href="/monitor/index.html">监控中心</a>
+            <a href="/unstructured/client.html">非结构化备份</a>
         </nav>
         <div class="user-info">
             <span>管理员</span>
-            <a href="../login.html" class="logout">退出</a>
+            <a href="/login.html" class="logout">退出</a>
         </div>
     </header>`;
 
     // 2. 各模块侧边栏配置（按需扩展，结构与你原 HTML 完全一致）
     const sidebarConfigs = {
-        // 非结构化备份模块
+            // 非结构化备份模块
         unstructured: `
         <aside class="sidebar">
             <nav>
                 <div class="menu-group">
                     <ul class="menu-list">
-                        <li><a href="./client.html">客户端管理</a></li>
+                        <!-- ✅ 修改：./ 改为 /unstructured/ (绝对路径) -->
+                        <li><a href="/unstructured/client.html">客户端管理</a></li>
                         <li class="has-submenu">
                             <a href="javascript:void(0);" class="submenu-toggle" onclick="window.toggleSubmenu(this)">
                                 <span class="menu-icon">☰</span>
@@ -32,16 +33,17 @@
                                 <span class="arrow">▼</span>
                             </a>
                             <ul class="submenu">
-                                <li><a href="./storage/storage-policy.html">存储策略</a></li>
-                                <li><a href="./storage/storage-migrate-policy.html">复制迁移策略</a></li>
-                                <li><a href="./storage/storage-migrate-task.html">复制迁移任务</a></li>
-                                <li><a href="./storage/storage-offline.html">离线介质管理</a></li>
+                                <!-- ✅ 修改：./storage/ 改为 /unstructured/storage/ -->
+                                <li><a href="/unstructured/storage/storage-policy.html">存储策略</a></li>
+                                <li><a href="/unstructured/storage/storage-migrate-policy.html">复制迁移策略</a></li>
+                                <li><a href="/unstructured/storage/storage-migrate-task.html">复制迁移任务</a></li>
+                                <li><a href="/unstructured/storage/storage-offline.html">离线介质管理</a></li>
                             </ul>
                         </li>
-                        <li><a href="./takeover.html">接管管理</a></li>
-                        <li><a href="./export.html">数据导出</a></li>
-                        <li><a href="./search.html">全文检索</a></li>
-                        <li><a href="./tags.html">标签策略</a></li>
+                        <li><a href="/unstructured/takeover.html">接管管理</a></li>
+                        <li><a href="/unstructured/export.html">数据导出</a></li>
+                        <li><a href="/unstructured/search.html">全文检索</a></li>
+                        <li><a href="/unstructured/tags.html">标签策略</a></li>
                     </ul>
                 </div>
             </nav>
@@ -69,7 +71,7 @@
                 <div class="menu-group">
                     <ul class="menu-list">
                         <li><a href="config.html">平台配置</a></li>
-                        <li><a href="client.html">客户端管理</a></li>
+                        <li><a href="client1.html">客户端管理</a></li>
                         <li><a href="users.html">用户管理</a></li>
                         <li><a href="roles.html">角色权限</a></li>
                         <li><a href="logs.html">操作日志</a></li>
