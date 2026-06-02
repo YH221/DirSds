@@ -6,11 +6,65 @@
     <title>数据导出 - 非结构化备份</title>
     <link rel="stylesheet" href="../common.css">
     <link rel="stylesheet" href="storage/css/storage.css">
+    <style>
+        /* 下拉菜单样式 */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 120px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border-radius: 4px;
+            z-index: 10;
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+        }
+        .dropdown-content.show { display: block; }
+        .dropdown-content a {
+            color: #333;
+            padding: 10px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+        }
+        .dropdown-content a:hover { background-color: #f5f5f5; }
+        
+        /* 表单样式 */
+        .form-row { display: flex; align-items: center; margin-bottom: 16px; }
+        .form-label { width: 100px; text-align: right; margin-right: 12px; font-size: 14px; color: #333; flex-shrink: 0; }
+        .form-label .required { color: #ff4d4f; margin-right: 4px; }
+        .form-input { flex: 1; }
+        .form-input input, .form-input select { width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; }
+        
+        /* 组合控件样式 */
+        .combo-group { display: flex; gap: 8px; align-items: center; }
+        .combo-group select { flex: 1; }
+        .icon-btn { width: 32px; height: 32px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666; }
+        .icon-btn:hover { border-color: #1890ff; color: #1890ff; }
+
+        /* Switch 开关样式 */
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #1890ff; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* 弹窗样式 */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: #fff; border-radius: 8px; width: 500px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .modal-header { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { margin: 0; font-size: 16px; }
+        .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 16px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 12px; }
+    </style>
 </head>
-<!-- ✅ 添加 data-module 标识 -->
 <body data-module="unstructured">
 
-    <!-- ✅ 业务内容统一包裹在 #page-content 中 -->
     <div id="page-content">
         <nav class="breadcrumb">
             <a href="../index.html">首页</a>
@@ -22,102 +76,135 @@
         <h1 class="page-title">数据导出</h1>
 
         <div class="toolbar">
-            <button class="btn btn-primary" onclick="openModal('modal-add-export')">新建导出任务</button>
-            <div class="filter-bar">
-                <select>
-                    <option>全部状态</option>
-                    <option>进行中</option>
-                    <option>已完成</option>
-                    <option>失败</option>
-                </select>
+            <button class="btn btn-primary">手工导出</button>
+            
+            <!-- 下拉菜单按钮 -->
+            <div class="dropdown">
+                <button class="btn btn-primary" onclick="toggleDropdown('auto-export-menu')">自动导出 <span style="font-size: 10px;">▼</span></button>
+                <div id="auto-export-menu" class="dropdown-content">
+                    <a href="javascript:void(0)" onclick="openModal('modal-new-task')">新建任务</a>
+                    <a href="javascript:void(0)">停止任务</a>
+                    <a href="javascript:void(0)">启动任务</a>
+                </div>
             </div>
+
+            <button class="btn btn-primary">刷新</button>
+            <button class="btn btn-primary">删除任务</button>
+            <button class="btn btn-primary">取消任务</button>
+            <button class="btn btn-primary">立即执行</button>
         </div>
 
         <div class="card">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>任务名称</th>
-                        <th>源客户端</th>
-                        <th>导出目标</th>
-                        <th>数据大小</th>
-                        <th>创建时间</th>
+                        <th><input type="checkbox"></th>
+                        <th>任务名</th>
+                        <th>客户端</th>
                         <th>状态</th>
+                        <th>介质类型</th>
+                        <th>任务类型</th>
+                        <th>上次运行时间</th>
+                        <th>下次运行时间</th>
+                        <th>创建人</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>EXP-Finance-To-NAS</strong></td>
-                        <td>Client-Win-01</td>
-                        <td>Pool-NAS-01:/exports/finance</td>
-                        <td>450 GB</td>
-                        <td>2024-01-15 09:00</td>
-                        <td><span class="status-badge success">已完成</span></td>
+                        <td><input type="checkbox"></td>
+                        <td>每日全量导出</td>
+                        <td>Client-01</td>
+                        <td><span style="color: green;">运行中</span></td>
+                        <td>光盘</td>
+                        <td>自动</td>
+                        <td>2026-05-27 02:00:00</td>
+                        <td>2026-05-28 02:00:00</td>
+                        <td>admin</td>
                         <td>
-                            <button class="btn-text">查看日志</button>
-                            <button class="btn-text">重新导出</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>EXP-HR-Package</strong></td>
-                        <td>Client-Linux-05</td>
-                        <td>本地磁盘 /data/export</td>
-                        <td>12 GB</td>
-                        <td>2024-01-14 16:30</td>
-                        <td><span class="status-badge warning">进行中</span></td>
-                        <td>
-                            <button class="btn-text">查看进度</button>
-                            <button class="btn-text danger">取消</button>
+                            <button class="btn-text">编辑</button>
+                            <button class="btn-text danger">删除</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- 模态框 -->
-        <div id="modal-add-export" class="modal">
-            <div class="modal-content">
+        <!-- 新建任务弹窗 -->
+        <div id="modal-new-task" class="modal-overlay">
+            <div class="modal-box">
                 <div class="modal-header">
-                    <h3>新建导出任务</h3>
-                    <button class="close-btn" onclick="closeModal('modal-add-export')">&times;</button>
+                    <h3>新建任务</h3>
+                    <button class="modal-close" onclick="closeModal('modal-new-task')">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <form class="form-grid">
-                        <div class="form-group">
-                            <label>任务名称 <span class="required">*</span></label>
-                            <input type="text" placeholder="例如：EXP-Project-01">
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>任务名称：</div>
+                        <div class="form-input"><input type="text" placeholder="请输入任务名称"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>介质类型：</div>
+                        <div class="form-input"><select><option>光盘</option><option>磁带</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>光盘类型：</div>
+                        <div class="form-input"><select><option value="">请选择光盘类型</option><option>CD-R</option><option>DVD-R</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>导出内容：</div>
+                        <div class="form-input">
+                            <div class="combo-group">
+                                <select><option value="">请选择客户端</option><option>Client-01</option></select>
+                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">选择文件</button>
+                                <div class="icon-btn" title="添加">+</div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>源客户端 <span class="required">*</span></label>
-                            <select>
-                                <option>Client-Win-01</option>
-                                <option>Client-Linux-05</option>
-                            </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>标签：</div>
+                        <div class="form-input">
+                            <div class="combo-group">
+                                <select><option value="">请选择标签</option><option>Tag-01</option></select>
+                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">预览标签</button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>导出目标类型 <span class="required">*</span></label>
-                            <select>
-                                <option>存储池</option>
-                                <option>本地挂载</option>
-                                <option>FTP/SFTP</option>
-                            </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">增量：</div>
+                        <div class="form-input">
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
                         </div>
-                        <div class="form-group full-width">
-                            <label>目标路径 <span class="required">*</span></label>
-                            <input type="text" placeholder="例如：Pool-NAS-01:/exports/xxx">
-                        </div>
-                    </form>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn" onclick="closeModal('modal-add-export')">取消</button>
-                    <button class="btn btn-primary">创建任务</button>
+                    <button class="btn" onclick="closeModal('modal-new-task')">取消</button>
+                    <button class="btn btn-primary">确定</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="../common.js"></script>
-    <script src="storage/js/storage.js"></script>
+    <script>
+        // 简单的下拉菜单切换逻辑
+        function toggleDropdown(id) {
+            document.getElementById(id).classList.toggle('show');
+        }
+        // 点击其他地方关闭下拉菜单
+        window.onclick = function(event) {
+            if (!event.target.matches('.btn-primary') && !event.target.matches('.btn-primary *')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 </html>

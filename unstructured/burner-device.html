@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>刻录设备 - 非结构化备份</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="storage/css/storage.css">
+    <style>
+        .form-row { display: flex; align-items: center; margin-bottom: 16px; }
+        .form-label { width: 100px; text-align: right; margin-right: 12px; font-size: 14px; color: #333; flex-shrink: 0; }
+        .form-label .required { color: #ff4d4f; margin-right: 4px; }
+        .form-input { flex: 1; }
+        .form-input input { width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; }
+        
+        .radio-group { display: flex; flex-direction: column; gap: 8px; }
+        .radio-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #333; cursor: pointer; }
+        .radio-item input { width: 16px; height: 16px; }
+
+        /* 弹窗样式 */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: #fff; border-radius: 8px; width: 480px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .modal-header { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { margin: 0; font-size: 16px; }
+        .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 16px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 12px; }
+    </style>
+</head>
+<body data-module="unstructured">
+
+    <div id="page-content">
+        <nav class="breadcrumb">
+            <a href="../index.html">首页</a>
+            <span class="sep">/</span>
+            <span>非结构化备份</span>
+            <span class="sep">/</span>
+            <span class="current">刻录设备</span>
+        </nav>
+        <h1 class="page-title">刻录设备</h1>
+
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="openModal('modal-new-device')">+ 新增设备</button>
+        </div>
+
+        <div class="card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>设备名称</th>
+                        <th>设备IP</th>
+                        <th>设备端口</th>
+                        <th>取盘方式</th>
+                        <th>连接状态</th>
+                        <th>驱动器数量</th>
+                        <th>驱动器1</th>
+                        <th>驱动器2</th>
+                        <th>左桶光盘数</th>
+                        <th>右桶光盘数</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Library-01</td>
+                        <td>192.168.1.100</td>
+                        <td>8080</td>
+                        <td>右桶->左桶</td>
+                        <td><span style="color: green;">在线</span></td>
+                        <td>2</td>
+                        <td>正常</td>
+                        <td>正常</td>
+                        <td>10</td>
+                        <td>5</td>
+                        <td>
+                            <button class="btn-text">编辑</button>
+                            <button class="btn-text danger">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 新增设备弹窗 -->
+        <div id="modal-new-device" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>新增设备</h3>
+                    <button class="modal-close" onclick="closeModal('modal-new-device')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>设备名称：</div>
+                        <div class="form-input"><input type="text" placeholder="请输入设备名称"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>设备端口：</div>
+                        <div class="form-input"><input type="text" placeholder="请输入设备端口"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>设备IP：</div>
+                        <div class="form-input"><input type="text" placeholder="请输入设备IP"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">取盘方式：</div>
+                        <div class="form-input">
+                            <div class="radio-group">
+                                <label class="radio-item">
+                                    <input type="radio" name="take-mode" checked> 右桶取盘->左桶出盘
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="take-mode"> 右/左桶取盘->中口出盘
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" onclick="closeModal('modal-new-device')">取消</button>
+                    <button class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common.js"></script>
+</body>
+</html>

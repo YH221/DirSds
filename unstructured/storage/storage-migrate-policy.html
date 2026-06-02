@@ -111,22 +111,90 @@
     <!-- 结束 page-content -->
 
     <!-- 添加策略弹窗 (保持不变) -->
+        <!-- 添加策略弹窗 -->
     <div class="modal-overlay" id="policyModal">
-        <!-- ... 弹窗内容保持不变 ... -->
         <div class="modal-box" style="width: 600px;">
             <div class="modal-header">
                 <h3>添加策略</h3>
                 <button class="modal-close" onclick="closeModal()">✕</button>
             </div>
             <div class="modal-body">
-                <!-- ... 表单内容保持不变 ... -->
-                 <div class="form-row">
-                    <div class="form-label"><span class="required">策略名称</span>：</div>
+                <!-- 策略名称 -->
+                <div class="form-row">
+                    <div class="form-label"><span class="required"></span> 策略名称：</div>
                     <div class="form-input">
                         <input type="text" placeholder="请输入策略名称">
                     </div>
                 </div>
-                <!-- ... 其他表单行 ... -->
+
+                <!-- 源端存储 -->
+                <div class="form-row">
+                    <div class="form-label"><span class="required"></span> 源端存储：</div>
+                    <div class="form-input">
+                        <select>
+                            <option value="">请选择源端存储</option>
+                            <option>Storage-Source-01</option>
+                            <option>Storage-Source-02</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 目标端存储 -->
+                <div class="form-row">
+                    <div class="form-label"><span class="required"></span> 目标端存储：</div>
+                    <div class="form-input">
+                        <select>
+                            <option value="">请选择目标端存储</option>
+                            <option>Storage-Target-01</option>
+                            <option>Storage-Target-02</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 传输线程数 -->
+                <div class="form-row">
+                    <div class="form-label"><span class="required"></span> 传输线程数：</div>
+                    <div class="form-input">
+                        <input type="number" value="4" min="1" max="64">
+                    </div>
+                </div>
+
+                <!-- 迁移条件 (组合控件) -->
+                <div class="form-row">
+                    <div class="form-label"><span class="required"></span> 迁移条件：</div>
+                    <div class="form-input">
+                        <div class="input-with-unit">
+                            <input type="number" value="1" min="1" style="width: 80px;">
+                            <div class="radio-group">
+                                <label><input type="radio" name="timeUnit"> 小时</label>
+                                <label><input type="radio" name="timeUnit" checked> 天</label>
+                                <label><input type="radio" name="timeUnit"> 月</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 任务类型 -->
+                <div class="form-row">
+                    <div class="form-label"><span class="required"></span> 任务类型：</div>
+                    <div class="form-input">
+                        <div class="radio-group">
+                            <label><input type="radio" name="taskType" checked> 复制</label>
+                            <label><input type="radio" name="taskType"> 迁移</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 策略类型 -->
+                <div class="form-row">
+                    <div class="form-label"><span class="required"></span> 策略类型：</div>
+                    <div class="form-input">
+                        <div class="radio-group">
+                            <label><input type="radio" name="policyType" checked> 手动</label>
+                            <label><input type="radio" name="policyType"> 定时</label>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn" onclick="closeModal()">取消</button>

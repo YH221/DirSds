@@ -40,8 +40,29 @@
                                 <li><a href="/unstructured/storage/storage-offline.html">离线介质管理</a></li>
                             </ul>
                         </li>
-                        <li><a href="/unstructured/takeover.html">接管管理</a></li>
-                        <li><a href="/unstructured/export.html">数据导出</a></li>
+                            <li class="has-submenu">
+                            <a href="javascript:void(0);" class="submenu-toggle" onclick="window.toggleSubmenu(this)">
+                                <span class="menu-icon">☰</span>
+                                <span>接管管理</span>
+                                <span class="arrow">▼</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="/unstructured/takeover-data.html">数据接管</a></li>
+                                <li><a href="/unstructured/takeover-copy.html">副本接管</a></li>
+                            </ul>
+                        </li>
+                         <!-- ✅ 修改：数据导出改为父菜单 -->
+                        <li class="has-submenu">
+                            <a href="javascript:void(0);" class="submenu-toggle" onclick="window.toggleSubmenu(this)">
+                                <span class="menu-icon">☰</span>
+                                <span>数据导出</span>
+                                <span class="arrow">▼</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="/unstructured/export.html">数据导出</a></li>
+                                <li><a href="/unstructured/burner-device.html">刻录设备</a></li>
+                            </ul>
+                        </li>
                         <li><a href="/unstructured/search.html">全文检索</a></li>
                         <li><a href="/unstructured/tags.html">标签策略</a></li>
                     </ul>

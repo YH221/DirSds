@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>副本接管 - 非结构化备份</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="storage/css/storage.css">
+    <style>
+        .form-row { display: flex; align-items: center; margin-bottom: 16px; }
+        .form-label { width: 100px; text-align: right; margin-right: 12px; font-size: 14px; color: #333; flex-shrink: 0; }
+        .form-label .required { color: #ff4d4f; margin-right: 4px; }
+        .form-input { flex: 1; }
+        .form-input input, .form-input select { width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; transition: border-color 0.2s; }
+        .form-input input:focus, .form-input select:focus { border-color: #1890ff; outline: none; }
+        .path-group { display: flex; gap: 8px; }
+        .path-group input { flex: 1; }
+        
+        .empty-state { text-align: center; padding: 60px 0; color: #999; }
+        .empty-state svg { width: 64px; height: 64px; margin-bottom: 12px; opacity: 0.5; }
+        .empty-state p { margin: 0; font-size: 14px; }
+
+        /* ✅ 核心修复3：强制弹窗脱离文档流，压住所有层级 */
+        .modal-overlay {
+            position: fixed !important;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999 !important;
+        }
+        .modal-overlay.active { display: flex !important; }
+        
+        .modal-box { background: #fff; border-radius: 8px; width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .modal-header { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
+        .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #999; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 16px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 12px; }
+    </style>
+</head>
+<body data-module="unstructured">
+
+    <div id="page-content">
+        <nav class="breadcrumb">
+            <a href="../index.html">首页</a><span class="sep">/</span>
+            <span>非结构化备份</span><span class="sep">/</span>
+            <span class="current">副本接管</span>
+        </nav>
+        <h1 class="page-title">副本接管</h1>
+
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="window.openModal('modal-copy-takeover')">新建</button>
+            <button class="btn btn-primary">关闭接管</button>
+        </div>
+
+        <div class="card">
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                </svg>
+                <p>暂无数据</p>
+            </div>
+            <table class="data-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>名称</th><th>类型</th><th>存储名称</th><th>客户端</th><th>路径</th>
+                        <th>挂载命令</th><th>描述</th><th>白名单</th><th>操作</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- 新建接管弹窗 -->
+        <div id="modal-copy-takeover" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>新建接管</h3>
+                    <button class="modal-close" onclick="window.closeModal('modal-copy-takeover')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row"><div class="form-label"><span class="required">*</span>名称：</div><div class="form-input"><input type="text" placeholder="请输入名称"></div></div>
+                    <div class="form-row"><div class="form-label"><span class="required">*</span>节点：</div><div class="form-input"><select><option value="">请选择节点</option><option>Node-01</option><option>Node-02</option></select></div></div>
+                    <div class="form-row"><div class="form-label"><span class="required">*</span>类型：</div><div class="form-input"><select><option value="">请选择类型</option><option>NFS</option><option>CIFS</option><option>SMB</option></select></div></div>
+                    <div class="form-row"><div class="form-label"><span class="required">*</span>存储名称：</div><div class="form-input"><select><option value="">请选择存储</option><option>Storage-Primary</option><option>Storage-Backup</option></select></div></div>
+                    <div class="form-row"><div class="form-label"><span class="required">*</span>客户端：</div><div class="form-input"><select><option value="">请选择客户端</option><option>Client-Win-01</option><option>Client-Linux-05</option></select></div></div>
+                    <div class="form-row"><div class="form-label"><span class="required">*</span>接管路径：</div><div class="form-input"><div class="path-group"><input type="text" placeholder="请输入路径"><button class="btn btn-primary">选择路径</button></div></div></div>
+                    <div class="form-row"><div class="form-label">描述：</div><div class="form-input"><input type="text" placeholder="请输入描述"></div></div>
+                    <div class="form-row"><div class="form-label">白名单：</div><div class="form-input"><input type="text" placeholder="请输入白名单"></div></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" onclick="window.closeModal('modal-copy-takeover')">取消</button>
+                    <button class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common.js"></script>
+    <script src="storage/js/storage.js"></script>
+</body>
+</html>

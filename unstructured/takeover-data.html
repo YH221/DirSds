@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据接管 - 非结构化备份</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="storage/css/storage.css">
+    <style>
+        .form-row { display: flex; align-items: center; margin-bottom: 16px; }
+        .form-label { width: 100px; text-align: right; margin-right: 12px; font-size: 14px; color: #333; flex-shrink: 0; }
+        .form-label .required { color: #ff4d4f; margin-right: 4px; }
+        .form-input { flex: 1; }
+        .form-input input, .form-input select { width: 100%; padding: 8px 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; transition: border-color 0.2s; }
+        .form-input input:focus, .form-input select:focus { border-color: #1890ff; outline: none; }
+        .path-group { display: flex; gap: 8px; }
+        .path-group input { flex: 1; }
+        .radio-group { display: flex; gap: 16px; align-items: center; }
+        .radio-group label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; color: #333; }
+        .radio-group input[type="radio"] { margin: 0; width: 16px; height: 16px; cursor: pointer; }
+        
+        /* 弹窗样式 */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: #fff; border-radius: 8px; width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .modal-header { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
+        .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #999; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 16px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 12px; }
+    </style>
+</head>
+<body data-module="unstructured">
+
+    <div id="page-content">
+        <nav class="breadcrumb">
+            <a href="../index.html">首页</a>
+            <span class="sep">/</span>
+            <span>非结构化备份</span>
+            <span class="sep">/</span>
+            <span class="current">数据接管</span>
+        </nav>
+        <h1 class="page-title">数据接管</h1>
+
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="openModal('modal-data-takeover')">新建</button>
+        </div>
+
+        <div class="card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>类型</th>
+                        <th>客户端</th>
+                        <th>直接挂载</th>
+                        <th>路径</th>
+                        <th>Web地址</th>
+                        <th>挂载命令</th>
+                        <th>描述</th>
+                        <th>白名单</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>test</td>
+                        <td>cifs</td>
+                        <td>linux176</td>
+                        <td>否</td>
+                        <td>/data/share</td>
+                        <td>http://192.168.1.100:8080</td>
+                        <td>mount -t cifs //192.168.1.176/test /test -o port=445</td>
+                        <td>测试接管节点</td>
+                        <td>192.168.1.0/24</td>
+                        <td>
+                            <button class="btn-text">编辑</button>
+                            <button class="btn-text danger">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 新建接管弹窗 -->
+        <div id="modal-data-takeover" class="modal-overlay">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>新建接管</h3>
+                    <button class="modal-close" onclick="closeModal('modal-data-takeover')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>名称：</div>
+                        <div class="form-input"><input type="text" placeholder="请输入名称"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>节点：</div>
+                        <div class="form-input"><select><option value="">请选择节点</option><option>Node-01</option><option>Node-02</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>类型：</div>
+                        <div class="form-input"><select><option value="">请选择类型</option><option>NFS</option><option>CIFS</option><option>SMB</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>客户端：</div>
+                        <div class="form-input"><select><option value="">请选择客户端</option><option>Client-Win-01</option><option>Client-Linux-05</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label"><span class="required">*</span>接管目录：</div>
+                        <div class="form-input">
+                            <div class="path-group">
+                                <input type="text" placeholder="请输入路径">
+                                <button class="btn btn-primary">选择路径</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">直接挂载：</div>
+                        <div class="form-input">
+                            <div class="radio-group">
+                                <label><input type="radio" name="direct-mount"> 是</label>
+                                <label><input type="radio" name="direct-mount" checked> 否</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">描述：</div>
+                        <div class="form-input"><input type="text" placeholder="请输入描述"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">白名单：</div>
+                        <div class="form-input"><input type="text" placeholder="请输入白名单"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" onclick="closeModal('modal-data-takeover')">取消</button>
+                    <button class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../common.js"></script>
+    <script src="storage/js/storage.js"></script>
+</body>
+</html>
